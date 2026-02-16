@@ -48,3 +48,18 @@ Thumbs.db
 *.mov
 *.wmv
 
+# ===== IntelliJ IDEA =====
+.idea/
+*.iml
+
+# ===== Java build output =====
+out/
+
+# ===== Logs =====
+*.log
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+
+
