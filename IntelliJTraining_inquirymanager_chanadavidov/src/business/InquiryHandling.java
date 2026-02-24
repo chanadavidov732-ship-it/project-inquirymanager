@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class InquiryHandling extends Thread {
     private Inquiry currentInquiry;
 
+    @Deprecated//יש להשתמש ב InquiryManager.inquiryCreation()
     public void createInquiry(){
         Scanner scanner = new Scanner(System.in);
 
@@ -22,6 +23,7 @@ public class InquiryHandling extends Thread {
             default -> throw new IllegalStateException("Unexpected value: " + x);
         };
     }
+
     @Override
     public void run() {
         if(currentInquiry instanceof Question)
