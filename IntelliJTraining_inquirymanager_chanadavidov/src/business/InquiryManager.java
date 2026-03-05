@@ -36,7 +36,6 @@ public class InquiryManager {
                 System.out.println(e.toString());
             }
         }
-
     }
 
 //    public InquiryManager() {
