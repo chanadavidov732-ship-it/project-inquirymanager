@@ -18,7 +18,7 @@ public class HandleFiles {
         FileWriter writer = new FileWriter(dataFile, false);
         writer.write(forSaving.getData());
         writer.close();
-
+        System.out.println("saveFile     "+forSaving.getFileName());
     }
 
     public void deleteFile(ForSaving forSaving){
@@ -26,15 +26,20 @@ public class HandleFiles {
         if (dataFile.exists()) {
             dataFile.delete();
         }
+        System.out.println("deleteFile      "+forSaving.getFileName());
+
     }
 
     public void updateFile(ForSaving forSaving) throws IOException {
        saveFile(forSaving);
+        System.out.println("updateFile    "+forSaving.getFileName());
+
     }
 
     public void saveFiles(List<ForSaving> forSavingList) throws IOException {
         for(ForSaving i:forSavingList)
             saveFile(i);
+        System.out.println("saveFiles");
 
     }
 }
