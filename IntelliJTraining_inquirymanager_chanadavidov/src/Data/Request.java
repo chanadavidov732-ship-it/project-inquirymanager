@@ -1,5 +1,6 @@
 package Data;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
 public class Request extends Inquiry{
@@ -22,5 +23,23 @@ public class Request extends Inquiry{
     @Override
     public void handling(){
         System.out.println("The system is currently processing a request number "+this.code+".......");
+    }
+
+    @Override
+    public String getFolderName() {
+        File folder=new File("request");
+        if(!folder.exists())
+            folder.mkdir();
+        return folder.getName();
+    }
+
+    @Override
+    public String getFileName() {
+        return this.code.toString();
+    }
+
+    @Override
+    public String getData() {
+        return this.description;
     }
 }

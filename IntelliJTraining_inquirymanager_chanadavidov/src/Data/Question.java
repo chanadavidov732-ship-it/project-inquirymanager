@@ -1,5 +1,6 @@
 package Data;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
 public class Question extends Inquiry{
@@ -24,6 +25,23 @@ public class Question extends Inquiry{
         System.out.println("The system is currently processing a question number "+this.code+".......");
     }
 
+    @Override
+    public String getFolderName() {
+        File folder=new File("question");
+        if(!folder.exists())
+            folder.mkdir();
+        return folder.getName();
+    }
+
+    @Override
+    public String getFileName() {
+         return this.code.toString();
+    }
+
+    @Override
+    public String getData() {
+        return this.description;
+    }
 
     public Integer getCode() {
         return code;

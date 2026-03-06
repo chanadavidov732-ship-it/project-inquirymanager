@@ -4,7 +4,10 @@ import Data.Complaint;
 import Data.Inquiry;
 import Data.Question;
 import Data.Request;
+import HandleStoreFiles.ForSaving;
+import HandleStoreFiles.HandleFiles;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -13,7 +16,7 @@ public class InquiryManager {
 
     Queue<Inquiry> QInquiry = new LinkedList<>();
 
-    public void inquiryCreation(){
+    public void inquiryCreation() throws IOException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("press:\n1 for question\n2 for request \n3 for complaint");
@@ -24,6 +27,9 @@ public class InquiryManager {
             case 3 -> new Complaint("1comp","some");
             default -> throw new IllegalStateException("Unexpected value: " + x);
         });
+        HandleFiles im= new HandleFiles();
+        im.saveFile(QInquiry.peek());
+
     }
 
     public void processInquiryManager(){
