@@ -2,10 +2,12 @@ import business.InquiryHandling;
 import Data.Question;
 import business.InquiryManager;
 
+import java.io.IOException;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 //        InquiryHandling handling1 = new InquiryHandling();
 //        Thread handling2 = new InquiryHandling();
 //        InquiryHandling handling3 = new InquiryHandling();

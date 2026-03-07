@@ -4,14 +4,12 @@ import Data.Complaint;
 import Data.Inquiry;
 import Data.Question;
 import Data.Request;
-import HandleStoreFiles.ForSaving;
-import HandleStoreFiles.HandleFiles;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
-
+import HandleStoreFiles.HandleFiles;
 public class InquiryManager {
 
     Queue<Inquiry> QInquiry = new LinkedList<>();
