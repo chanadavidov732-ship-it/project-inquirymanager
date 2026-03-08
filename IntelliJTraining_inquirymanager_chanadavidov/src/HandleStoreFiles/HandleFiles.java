@@ -16,7 +16,7 @@ public class HandleFiles {
         }
         File dataFile = new File(folder, forSaving.getFileName() + ".txt");
         FileWriter writer = new FileWriter(dataFile, false);
-        writer.write(forSaving.getData());
+        writer.write("inquiry type: "+forSaving.getFolderName()+", description: "+forSaving.getData()+", number inquiry: "+forSaving.getFileName());
         writer.close();
         System.out.println("saveFile     "+forSaving.getFileName());
     }
