@@ -1,9 +1,8 @@
 package Data;
 
-import HandleStoreFiles.ForSaving;
-
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Complaint extends Inquiry {
     private Integer code;
@@ -11,6 +10,7 @@ public class Complaint extends Inquiry {
     private LocalDateTime creationDate;
     private String assignedBranch;
 
+    public Complaint(){}
     public Complaint(String assignedBranch, String description) {
         this.code=nextCodeVal++;
         this.creationDate=LocalDateTime.now();
@@ -21,7 +21,7 @@ public class Complaint extends Inquiry {
     public void fillDataByUser(Integer code, String description, String assignedBranch){
         this.code=code;
         this.description=description;
-        this.creationDate=LocalDateTime.now();
+        //this.creationDate= creationDate;
         this.assignedBranch=assignedBranch;
     }
 
@@ -31,21 +31,13 @@ public class Complaint extends Inquiry {
     }
 
     @Override
-    public String getFolderName() {
-        File folder=new File("complaint");
-        if(!folder.exists())
-            folder.mkdir();
-        return folder.getName();
-    }
-
-    @Override
     public String getFileName() {
-        return this.code.toString();
+        return code.toString();
     }
 
     @Override
     public String getData() {
-        return this.description;
+        return "description: "+description+", creationDate: "+creationDate+", assignedBranch: "+assignedBranch;
     }
 
     public String getAssignedBranch() {

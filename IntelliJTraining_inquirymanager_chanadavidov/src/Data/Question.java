@@ -8,7 +8,7 @@ public class Question extends Inquiry{
     private String description;
     private LocalDateTime creationDate;
 
-
+    public Question(){}
     public Question(String description) {
         this.description = description;
         this.code=nextCodeVal++;
@@ -18,31 +18,21 @@ public class Question extends Inquiry{
     public void fillDataByUser(Integer code, String description){
         this.code=code;
         this.description=description;
-        this.creationDate=LocalDateTime.now();
+        //this.creationDate=creationDate;
     }
     @Override
     public void handling(){
         System.out.println("The system is currently processing a question number "+this.code+".......");
     }
-
-    @Override
-    public String getFolderName() {
-        File folder=new File("question");
-        if(!folder.exists())
-            folder.mkdir();
-        return folder.getName();
-    }
-
     @Override
     public String getFileName() {
-         return this.code.toString();
+        return code.toString();
     }
 
     @Override
     public String getData() {
-        return this.description;
+        return "description: "+description+", creationDate: "+creationDate;
     }
-
     public Integer getCode() {
         return code;
     }

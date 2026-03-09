@@ -5,6 +5,8 @@ import Data.Inquiry;
 import Data.Question;
 import Data.Request;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -12,7 +14,39 @@ import java.util.Scanner;
 import HandleStoreFiles.HandleFiles;
 public class InquiryManager {
 
-    Queue<Inquiry> QInquiry = new LinkedList<>();
+    final static Queue<Inquiry> QInquiry ;
+
+    static {
+        QInquiry = new LinkedList<>();
+        try {
+            before();
+        }
+        catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void before() throws FileNotFoundException {
+        String[] folders = {"Data.Request", "Data.Question", "Data.Complaint"};
+        HandleFiles handleFiles=new HandleFiles();
+        for (String folderName : folders) {
+            File folder = new File(folderName);
+            if (folder.exists() ) {
+                File[] files = folder.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        String fileName = file.getName().replace(".txt", "");
+                        Inquiry temp = new Inquiry() {
+                            @Override public String getFolderName() { return folderName; }
+                            @Override public String getFileName() { return fileName; }
+                        };
+                        handleFiles.readFile(temp);
+                    }
+                }
+            }
+        }
+        System.out.println("debug");
+    }
 
     public void inquiryCreation() throws IOException {
         Scanner scanner = new Scanner(System.in);
@@ -31,8 +65,7 @@ public class InquiryManager {
     }
 
     public void processInquiryManager(){
-
-       while(this.QInquiry.peek()!=null){
+        while(this.QInquiry.peek()!=null){
             this.QInquiry.poll().handling();
             try {
                 Thread.currentThread().sleep(3*1000);
@@ -42,16 +75,7 @@ public class InquiryManager {
         }
     }
 
-//    public InquiryManager() {
-//        this.QInquiry = new Queue<Inquiry>() {
-//        };
-//    }
-
-//    public Queue<Inquiry> getQInquiry() {
-//        return QInquiry;
-//    }
-//
-//    public void setQInquiry(Queue<Inquiry> QInquiry) {
-//        this.QInquiry = QInquiry;
-//    }
+    public static Queue<Inquiry> getQInquiry(){
+        return QInquiry;
+    }
 }

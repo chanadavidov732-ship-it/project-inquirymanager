@@ -8,38 +8,31 @@ public class Request extends Inquiry{
     private String description;
     private LocalDateTime creationDate;
 
+    public Request(){}
+
     public Request(String description) {
         this.description = description;
         this.code=nextCodeVal++;
         this.creationDate=LocalDateTime.now();
     }
 
-    public void fillDataByUser(Integer code,String description){
+    public void fillDataByUser(Integer code,String description){//,LocalDateTime creationDate){
         this.code=code;
         this.description=description;
-        this.creationDate=LocalDateTime.now();
+        //this.creationDate=creationDate;
     }
 
     @Override
     public void handling(){
         System.out.println("The system is currently processing a request number "+this.code+".......");
     }
-
-    @Override
-    public String getFolderName() {
-        File folder=new File("request");
-        if(!folder.exists())
-            folder.mkdir();
-        return folder.getName();
-    }
-
     @Override
     public String getFileName() {
-        return this.code.toString();
+        return code.toString();
     }
 
     @Override
     public String getData() {
-        return this.description;
+        return "description: "+description+", creationDate: "+creationDate;
     }
 }
