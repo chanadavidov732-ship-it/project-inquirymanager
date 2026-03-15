@@ -15,7 +15,11 @@ public class Request extends Inquiry{
         this.code=nextCodeVal++;
         this.creationDate=LocalDateTime.now();
     }
-
+    public Request(Integer code,String description) {
+        this.code=code;
+        this.description=description;
+        //this.creationDate=creationDate;
+    }
     public void fillDataByUser(Integer code,String description){//,LocalDateTime creationDate){
         this.code=code;
         this.description=description;

@@ -17,6 +17,12 @@ public class Complaint extends Inquiry {
         this.assignedBranch = assignedBranch;
         this.description = description;
     }
+    public Complaint(Integer code,String description,String assignedBranch) {
+        this.code=code;
+        this.description=description;
+        this.assignedBranch = assignedBranch;
+        //this.creationDate=creationDate;
+    }
 
     public void fillDataByUser(Integer code, String description, String assignedBranch){
         this.code=code;

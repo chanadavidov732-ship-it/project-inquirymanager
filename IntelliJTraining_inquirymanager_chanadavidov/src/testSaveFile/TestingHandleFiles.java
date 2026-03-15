@@ -23,7 +23,10 @@ public class TestingHandleFiles {
         PersonForTestSaving p5 = new PersonForTestSaving("123456789","sucess BH!");
         handleFiles2.saveCSVObject(p5, p5.getId() + ".p");
 
-
+        PersonForTestSaving readP5 = new PersonForTestSaving("123456789","sucess BH!");
+        handleFiles2.saveCSVObject(p5, "id");
+        PersonForTestSaving readP6 = (PersonForTestSaving) handleFiles2.readCsv("id");
+        System.out.println(readP6);
 
 
     }

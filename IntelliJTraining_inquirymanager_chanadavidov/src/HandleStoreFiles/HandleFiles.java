@@ -31,7 +31,6 @@ public class HandleFiles {
         iForSaving.parseFromFile(values);
     }
 
-
     public void saveFile(IForSaving iForSaving) throws IOException {
         File folder = new File(iForSaving.getFolderName());
         if (!folder.exists())
@@ -46,7 +45,6 @@ public class HandleFiles {
         System.out.println("finish saveFile");
     }
 
-
     public void deleteFile(IForSaving iForSaving){
         File dataFile = new File(iForSaving.getFolderName(), iForSaving.getFileName() + ".txt");
         if (dataFile.exists()) {
@@ -55,18 +53,15 @@ public class HandleFiles {
         System.out.println("deleteFile      "+ iForSaving.getFileName());
     }
 
-
     public void updateFile(IForSaving iForSaving) throws IOException {
        saveFile(iForSaving);
         System.out.println("updateFile    "+ iForSaving.getFileName());
     }
-
 
     public void saveFiles(List<IForSaving> IForSavingList) throws IOException {
         for(IForSaving i: IForSavingList)
             saveFile(i);
         System.out.println("saveFiles");
     }
-
 
 }
