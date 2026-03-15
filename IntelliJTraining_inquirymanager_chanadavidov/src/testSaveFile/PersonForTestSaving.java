@@ -14,6 +14,14 @@ public class PersonForTestSaving implements IForSaving {
         this.name = name;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public String getFolderName() {
         return getClass().getPackageName();
     }
