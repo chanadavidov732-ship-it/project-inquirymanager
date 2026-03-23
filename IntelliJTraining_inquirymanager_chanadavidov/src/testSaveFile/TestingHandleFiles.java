@@ -4,10 +4,11 @@ import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.HandleFilesReflection;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public class TestingHandleFiles {
-    public static void main(String[] args) throws IOException, IllegalAccessException {
+    public static void main(String[] args) throws IOException, IllegalAccessException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException {
 //        PersonForTestSaving p1 = new PersonForTestSaving("1234","aaa");
 //        PersonForTestSaving p2 = new PersonForTestSaving("5432","bbb");
 //        PersonForTestSaving p3 = new PersonForTestSaving("9999","ccc");

@@ -10,15 +10,18 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class HandleFilesReflection extends HandleFiles{
+
     public String getCSVDataRecursive(Object obj) throws IllegalAccessException {
-        Class c;
-        c=obj.getClass();
+        Class<?> c = obj.getClass();
         String s="";
-        s+=c.getSimpleName()+",";
+        s+=c.getName()+",";
         for (Field field : c.getDeclaredFields()) {
             field.setAccessible(true);
 
@@ -48,31 +51,43 @@ public class HandleFilesReflection extends HandleFiles{
         System.out.println("finish saveFile");
     }
 
-    public Object readCsv(String filePath) throws FileNotFoundException {
-        File dataFile = new File(filePath);
-        Inquiry newO;
-
-        Scanner scanner =new   Scanner(dataFile);
+    public Object readCsv(String filePath) throws FileNotFoundException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        File dataFile = new File(filePath + ".txt");
+        Scanner scanner =new Scanner(dataFile);
         scanner.useDelimiter(",");
-        String className=scanner.next();
 
-        ArrayList<Object> fieldes = new ArrayList<>();
+        String className=scanner.next().trim();
+
+        Class<?> clazz = Class.forName(className);
+        Object newO = clazz.getDeclaredConstructor().newInstance();
+
+        List<Field> allFields = new ArrayList<>();
+        Field[] currentFields = clazz.getDeclaredFields();
+
+        Field[] parentFields = clazz.getSuperclass().getDeclaredFields();
+
+        allFields.addAll(Arrays.asList(parentFields));
+        allFields.addAll(Arrays.asList(currentFields));
+
+        ArrayList<Object> fieldValuesFromFile = new ArrayList<>();
         while (scanner.hasNext()) {
-            fieldes.add(scanner.next());
+            fieldValuesFromFile.add(scanner.next());
         }
 
-        if(className.equals("Question"))
-            newO = new Question(Integer.parseInt(fieldes.get(0).toString()), fieldes.get(1).toString());
-        else
-            if(className.equals("Request"))
-                newO=new Request(Integer.parseInt(fieldes.get(0).toString()), fieldes.get(1).toString());
-            else
-            if(className.equals("Complaint"))
-                newO=new Complaint(Integer.parseInt(fieldes.get(0).toString()), fieldes.get(1).toString(), fieldes.get(2).toString());
-        else
-            newO=new Inquiry();
+        System.out.println("DEBUG: מספר השדות שנמצאו במחלקה: " + fieldValuesFromFile.size());
+        System.out.println("DEBUG: מספר הערכים שנקראו מהקובץ: " + allFields.size());
+        for (int i = 0; i < fieldValuesFromFile.size() && i < allFields.size(); i++) {
+            Field field = allFields.get(i);
 
+            String value = fieldValuesFromFile.get(i).toString();
+            System.out.println("DEBUG: מציב בשדה [" + field.getName() + "] את הערך: " + value);            field.setAccessible(true);
 
+            if (field.getType() == Integer.class || field.getType() == int.class) {
+                field.set(newO, Integer.parseInt(value));
+            } else {
+                field.set(newO, value);
+            }
+        }
         return newO;
     }
 

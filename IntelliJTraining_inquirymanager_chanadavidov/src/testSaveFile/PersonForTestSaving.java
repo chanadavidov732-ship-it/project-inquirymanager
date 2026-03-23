@@ -8,7 +8,7 @@ public class PersonForTestSaving implements IForSaving {
 
     String id;
     String name;
-
+    public PersonForTestSaving(){}
     public PersonForTestSaving(String id, String name) {
         this.id = id;
         this.name = name;
@@ -37,5 +37,9 @@ public class PersonForTestSaving implements IForSaving {
     @Override
     public void parseFromFile(List<String> values) {
 
+    }
+    @Override
+    public String toString() {
+        return "Person [ID=" + id + " , name=" + name + "]";
     }
 }

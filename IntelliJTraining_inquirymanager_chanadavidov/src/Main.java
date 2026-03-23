@@ -16,9 +16,9 @@ public class Main {
 //        handling3.createInquiry();
 //        handling4.createInquiry();
 
-//        InquiryManager inquiryManager = new InquiryManager();
-//        inquiryManager.inquiryCreation();
-//        inquiryManager.inquiryCreation();
+//       InquiryManager inquiryManager = new InquiryManager();
+//       inquiryManager.inquiryCreation();
+//       inquiryManager.inquiryCreation();
 //       inquiryManager.processInquiryManager();
 
 
