@@ -3,10 +3,11 @@ import Data.Question;
 import business.InquiryManager;
 
 import java.io.IOException;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, IllegalAccessException {
 //        InquiryHandling handling1 = new InquiryHandling();
 //        Thread handling2 = new InquiryHandling();
 //        InquiryHandling handling3 = new InquiryHandling();
@@ -16,10 +17,12 @@ public class Main {
 //        handling3.createInquiry();
 //        handling4.createInquiry();
 
-//       InquiryManager inquiryManager = new InquiryManager();
-//       inquiryManager.inquiryCreation();
-//       inquiryManager.inquiryCreation();
-//       inquiryManager.processInquiryManager();
+        InquiryManager inquiryManager = new InquiryManager();
+        inquiryManager.defineRepresentative();
+
+        // inquiryManager.inquiryCreation();
+        // inquiryManager.inquiryCreation();
+        // inquiryManager.processInquiryManager();
 
 
         // first running
