@@ -18,11 +18,11 @@ public class Main {
 //        handling4.createInquiry();
 
         InquiryManager inquiryManager = new InquiryManager();
-        inquiryManager.defineRepresentative();
+//        inquiryManager.defineRepresentative();
 
-        // inquiryManager.inquiryCreation();
-        // inquiryManager.inquiryCreation();
-        // inquiryManager.processInquiryManager();
+         inquiryManager.inquiryCreation();
+         inquiryManager.inquiryCreation();
+       //  inquiryManager.processInquiryManager();
 
 
         // first running

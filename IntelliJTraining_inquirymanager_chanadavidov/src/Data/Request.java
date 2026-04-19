@@ -12,7 +12,7 @@ public class Request extends Inquiry{
 
     public Request(String description) {
         this.description = description;
-        this.code=nextCodeVal++;
+        this.code=getNextCodeVal();
         this.creationDate=LocalDateTime.now();
     }
     public Request(Integer code,String description) {
@@ -24,6 +24,9 @@ public class Request extends Inquiry{
         this.code=code;
         this.description=description;
         //this.creationDate=creationDate;
+    }
+    public int getCode() {
+        return code;
     }
 
     @Override

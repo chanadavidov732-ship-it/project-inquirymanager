@@ -1,0 +1,1 @@
+inquiry type: Data.Complaint, number inquiry: 1, description: description: some, creationDate: 2026-04-19T23:24:56.905856400, assignedBranch: 1comp
