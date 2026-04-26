@@ -1,5 +1,7 @@
 package HandleStoreFiles;
 
+import Shared.Inquiry;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,5 +80,35 @@ public class HandleFiles {
 //        }
 //        return currentId;
 //    }
+
+    public List<Inquiry> readAllInquiries() {
+        List<Inquiry> allInquiries = new ArrayList<>();
+        String[] folders = {"Data.Request", "Data.Question", "Data.Complaint"};
+
+        for (String folderPath : folders) {
+            File folder = new File(folderPath);
+            if (folder.exists() && folder.isDirectory()) {
+                File[] files = folder.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        Inquiry inq = loadInquiryFromFile(file);
+                        if (inq != null) {
+                            allInquiries.add(inq);
+                        }
+                    }
+                }
+            }
+        }
+        return allInquiries;
+    }
+
+    private Inquiry loadInquiryFromFile(File file) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (Inquiry) ois.readObject();
+        } catch (Exception e) {
+            System.err.println("Error reading file " + file.getName() + ": " + e.getMessage());
+            return null;
+        }
+    }
 
 }

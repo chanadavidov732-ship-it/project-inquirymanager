@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
 
@@ -132,7 +133,23 @@ public class InquiryManager {
         }
     }
 
-    public static Queue<Inquiry> getQInquiry() {
-        return QInquiry;
+  //  public static Queue<Inquiry> getQInquiry() {
+     //   return QInquiry;
+  //  }
+
+    public void addInquiryFromClient(Inquiry inquiry) throws IOException {
+        HandleFiles handleFiles = new HandleFiles();
+
+        int nextId = handleFiles.getNextIdAndIncrement();
+        inquiry.setCode(nextId);
+
+        handleFiles.saveFile(inquiry);
+
+        QInquiry.add(inquiry);
+    }
+
+    public List<Inquiry> getAllInquiriesForClient() {
+        HandleFiles handleFiles = new HandleFiles();
+        return handleFiles.readAllInquiries();
     }
 }
