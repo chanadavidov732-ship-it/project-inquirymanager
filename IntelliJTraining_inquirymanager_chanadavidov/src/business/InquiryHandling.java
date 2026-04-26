@@ -1,8 +1,8 @@
 package business;
-import Data.Complaint;
-import Data.Inquiry;
-import Data.Question;
-import Data.Request;
+import Shared.Complaint;
+import Shared.Inquiry;
+import Shared.Question;
+import Shared.Request;
 
 import java.util.Scanner;
 

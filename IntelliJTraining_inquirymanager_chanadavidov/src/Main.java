@@ -1,5 +1,3 @@
-import business.InquiryHandling;
-import Data.Question;
 import business.InquiryManager;
 
 import java.io.IOException;

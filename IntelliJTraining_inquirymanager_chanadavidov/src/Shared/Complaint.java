@@ -1,8 +1,6 @@
-package Data;
+package Shared;
 
-import java.io.File;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class Complaint extends Inquiry {
     private Integer code;

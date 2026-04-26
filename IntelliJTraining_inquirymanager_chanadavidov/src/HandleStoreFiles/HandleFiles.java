@@ -1,16 +1,9 @@
 package HandleStoreFiles;
 
-import Data.Complaint;
-import Data.Question;
-import Data.Request;
-import testSaveFile.PersonForTestSaving;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import static business.InquiryManager.getQInquiry;
 
 public class HandleFiles {
 

@@ -1,4 +1,4 @@
-package Data;
+package Shared;
 
 public class Representative {
     static int RepresentativeCode = 0;

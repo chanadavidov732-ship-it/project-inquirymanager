@@ -1,4 +1,4 @@
-package Data;
+package Shared;
 
 import HandleStoreFiles.IForSaving;
 import business.InquiryManager;

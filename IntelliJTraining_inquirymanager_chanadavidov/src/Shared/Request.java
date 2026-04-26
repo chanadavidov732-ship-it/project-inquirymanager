@@ -1,6 +1,5 @@
-package Data;
+package Shared;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
 public class Request extends Inquiry{

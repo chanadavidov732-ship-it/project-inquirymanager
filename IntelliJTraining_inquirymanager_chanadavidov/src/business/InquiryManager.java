@@ -1,6 +1,6 @@
 package business;
 
-import Data.*;
+import Shared.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
