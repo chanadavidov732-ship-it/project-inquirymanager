@@ -146,7 +146,7 @@ public class InquiryManager {
         }
         FileWriter writer = new FileWriter(dataFile, false);
 
-        writer.write( String.valueOf(QInquiry.peek().getCode()));
+        writer.write( String.valueOf(Inquiry.nextCodeVal));
         writer.flush();
         writer.close();
         System.out.println("finish saveFile: nextVal");
