@@ -64,4 +64,26 @@ public class HandleFiles {
         System.out.println("saveFiles");
     }
 
+    public synchronized int getNextIdAndIncrement() {
+        int currentId = 1;
+        File idFile = new File("id_counter.txt");
+
+        try {
+            if (idFile.exists()) {
+                Scanner scanner = new Scanner(idFile);
+                if (scanner.hasNextInt()) {
+                    currentId = scanner.nextInt();
+                }
+                scanner.close();
+            }
+
+            FileWriter writer = new FileWriter(idFile, false);
+            writer.write(String.valueOf(currentId + 1));
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Error managing ID file: " + e.getMessage());
+        }
+        return currentId;
+    }
+
 }
