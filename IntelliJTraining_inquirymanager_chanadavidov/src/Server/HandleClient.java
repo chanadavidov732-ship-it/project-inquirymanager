@@ -1,54 +1,69 @@
 package Server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
+import Shared.*;
+import HandleStoreFiles.HandleFiles;
+import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
-public class InquiryManagerServer {
-    private ServerSocket myServer;
-    private static final int PORT = 12345;
-    private boolean isRunning = false;
+public class HandleClient extends Thread {
+    private Socket clientSocket;
 
-    public InquiryManagerServer() {
-        try {
-            myServer = new ServerSocket(PORT);
-        } catch (IOException e) {
-            System.err.println("Could not listen on port " + PORT);
-        }
+    public HandleClient(Socket clientSocket) {
+        this.clientSocket = clientSocket;
     }
 
-    public void startServer() {
-        isRunning = true;
-        System.out.println("Inquiry Manager Server started on port " + PORT);
+    @Override
+    public void run() {
+        handleClientRequest();
+    }
 
-        while (isRunning) {
+    private void handleClientRequest() {
+        try (ObjectInputStream input = new ObjectInputStream(clientSocket.getInputStream());
+             ObjectOutputStream output = new ObjectOutputStream(clientSocket.getOutputStream())) {
+
+            RequestObj request = (RequestObj) input.readObject();
+            ResponseObj response;
+            HandleFiles fileHandler = new HandleFiles();
+
             try {
-                Socket clientSocket = myServer.accept();
-                // יצירת HandleClient והפעלתו ב-Thread נפרד
-                HandleClient handler = new HandleClient(clientSocket);
-                handler.start();
-            } catch (IOException e) {
-                if (isRunning) {
-                    System.err.println("Accept failed: " + e.getMessage());
+                switch (request.getAction()) {
+                    case ADD_INQUIRY:
+                        Inquiry newInquiry = (Inquiry) request.getParams();
+                        int nextId = fileHandler.getNextIdAndIncrement();
+                        newInquiry.setCode(nextId);
+
+                        fileHandler.saveFile(newInquiry);
+                        response = new ResponseObj(200, "SUCCESS", nextId);
+                        break;
+
+                    case GET_ALL:
+                        List<Inquiry> allInquiries = fileHandler.readAllInquiries();
+                        response = new ResponseObj(200, "SUCCESS", allInquiries);
+                        break;
+
+                    case TEST:
+                        response = new ResponseObj(200, "SUCCESS", "SERVER_READY");
+                        break;
+
+                    default:
+                        response = new ResponseObj(400, "FAILED", "Unknown action");
                 }
+            } catch (Exception e) {
+                response = new ResponseObj(500, "FAILED", "Error: " + e.getMessage());
+            }
+
+            output.writeObject(response);
+            output.flush();
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Communication error: " + e.getMessage());
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-    }
-
-    public void stop() {
-        isRunning = false;
-        try {
-            if (myServer != null) {
-                myServer.close();
-            }
-            System.out.println("Server stopped.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        InquiryManagerServer server = new InquiryManagerServer();
-        server.startServer();
     }
 }
