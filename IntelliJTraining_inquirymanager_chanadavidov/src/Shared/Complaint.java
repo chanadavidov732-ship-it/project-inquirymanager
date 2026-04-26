@@ -1,8 +1,11 @@
 package Shared;
 
+import HandleStoreFiles.IForSaving;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Complaint extends Inquiry {
+public class Complaint extends Inquiry  implements IForSaving, Serializable {
     private Integer code;
     private String description;
     private LocalDateTime creationDate;

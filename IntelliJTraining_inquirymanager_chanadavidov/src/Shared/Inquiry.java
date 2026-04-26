@@ -4,10 +4,11 @@ import HandleStoreFiles.IForSaving;
 import business.InquiryManager;
 
 import java.io.File;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Inquiry implements IForSaving {
+public class Inquiry implements IForSaving, Serializable {
     public static Integer nextCodeVal = 1;
     private Integer code;
     private String description;

@@ -1,8 +1,11 @@
 package Shared;
 
+import HandleStoreFiles.IForSaving;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Question extends Inquiry{
+public class Question extends Inquiry implements IForSaving, Serializable {
     private Integer code;
     private String description;
     private LocalDateTime creationDate;

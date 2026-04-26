@@ -1,6 +1,11 @@
 package Shared;
 
-public class Representative {
+import HandleStoreFiles.IForSaving;
+
+import java.io.Serializable;
+import java.util.List;
+
+public class Representative  implements IForSaving, Serializable {
     static int RepresentativeCode = 0;
 
     private int code;
@@ -36,5 +41,25 @@ public class Representative {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String getFolderName() {
+        return "";
+    }
+
+    @Override
+    public String getFileName() {
+        return "";
+    }
+
+    @Override
+    public String getData() {
+        return "";
+    }
+
+    @Override
+    public void parseFromFile(List<String> values) {
+
     }
 }
