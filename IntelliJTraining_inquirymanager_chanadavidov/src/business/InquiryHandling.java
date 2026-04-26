@@ -1,14 +1,10 @@
 package business;
-import Shared.Complaint;
-import Shared.Inquiry;
-import Shared.Question;
-import Shared.Request;
 
+import Shared.*;
 import java.util.Scanner;
 
 public class InquiryHandling extends Thread {
     private Inquiry currentInquiry;
-
     @Deprecated//יש להשתמש ב InquiryManager.inquiryCreation()
     public void createInquiry(){
         Scanner scanner = new Scanner(System.in);

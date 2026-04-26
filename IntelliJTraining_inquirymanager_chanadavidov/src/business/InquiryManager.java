@@ -164,20 +164,20 @@ public class InquiryManager {
         }
     }
 
-  //  public static Queue<Inquiry> getQInquiry() {
-     //   return QInquiry;
-  //  }
-
-    public void addInquiryFromClient(Inquiry inquiry) throws IOException {
-        HandleFiles handleFiles = new HandleFiles();
-
-        int nextId = handleFiles.getNextIdAndIncrement();
-        inquiry.setCode(nextId);
-
-        handleFiles.saveFile(inquiry);
-
-        QInquiry.add(inquiry);
+    public static Queue<Inquiry> getQInquiry(){
+        return QInquiry;
     }
+
+//    public void addInquiryFromClient(Inquiry inquiry) throws IOException {
+//        HandleFiles handleFiles = new HandleFiles();
+//
+//        int nextId = handleFiles.getNextIdAndIncrement();
+//        inquiry.setCode(nextId);
+//
+//        handleFiles.saveFile(inquiry);
+//
+//        QInquiry.add(inquiry);
+//    }
 
     public List<Inquiry> getAllInquiriesForClient() {
         HandleFiles handleFiles = new HandleFiles();
