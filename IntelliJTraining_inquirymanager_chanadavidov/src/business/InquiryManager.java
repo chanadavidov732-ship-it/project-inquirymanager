@@ -4,6 +4,7 @@ import Shared.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ public class InquiryManager {
         QInquiry = new LinkedList<>();
         try {
             before();
+
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -30,12 +32,18 @@ public class InquiryManager {
         QRepresentative = new LinkedList<>();
         try {
             beforeRepresentative();
+
         } catch (ClassNotFoundException |
                  InvocationTargetException |
                  NoSuchMethodException |
                  InstantiationException |
                  IllegalAccessException |
                  IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            beforeNextVal();
+        } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -60,6 +68,18 @@ public class InquiryManager {
             x = scanner.nextInt();
         }
         scanner.close();
+    }
+
+    public static void beforeNextVal() throws FileNotFoundException {
+        File dataFile = new File("nextVal.txt");
+        if (!dataFile.exists()|| dataFile.length() == 0) {
+            return;
+        }
+        Scanner scanner = new Scanner(dataFile);
+        if (scanner.hasNext()) {
+           Inquiry.nextCodeVal = Integer.parseInt(scanner.next());
+        }
+
     }
 
     public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -93,7 +113,6 @@ public class InquiryManager {
                             public String getFolderName() {
                                 return fn;
                             }
-
                             @Override
                             public String getFileName() {
                                 return fileName;
@@ -106,9 +125,8 @@ public class InquiryManager {
         }
     }
 
-    public void inquiryCreation() throws IOException {
+    public void inquiryCreation() throws IOException, IllegalAccessException {
         Scanner scanner = new Scanner(System.in);
-
         System.out.println("press:\n1 for question\n2 for request \n3 for complaint");
         int x = scanner.nextInt();
         QInquiry.add(switch (x) {
@@ -119,7 +137,20 @@ public class InquiryManager {
         });
         HandleFiles im = new HandleFiles();
         im.saveFile(QInquiry.peek());
+        saveNextValFile();
+    }
 
+    public void saveNextValFile() throws IOException, IllegalAccessException {
+        File dataFile = new File( "nextVal.txt");
+        if (dataFile.getParentFile() != null) {
+            dataFile.getParentFile().mkdirs();
+        }
+        FileWriter writer = new FileWriter(dataFile, false);
+
+        writer.write( String.valueOf(Inquiry.nextCodeVal));
+        writer.flush();
+        writer.close();
+        System.out.println("finish saveFile: nextVal");
     }
 
     public void processInquiryManager() {

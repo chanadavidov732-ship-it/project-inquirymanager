@@ -13,7 +13,7 @@ public class Complaint extends Inquiry  implements IForSaving, Serializable {
 
     public Complaint(){}
     public Complaint(String assignedBranch, String description) {
-        this.code=nextCodeVal++;
+        this.code=getNextCodeVal();
         this.creationDate=LocalDateTime.now();
         this.assignedBranch = assignedBranch;
         this.description = description;
@@ -71,7 +71,7 @@ public class Complaint extends Inquiry  implements IForSaving, Serializable {
         this.description = description;
     }
 
-    public Integer getCode() {
+    public int getCode() {
         return code;
     }
 

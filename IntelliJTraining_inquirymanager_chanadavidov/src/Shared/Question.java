@@ -13,7 +13,7 @@ public class Question extends Inquiry implements IForSaving, Serializable {
     public Question(){}
     public Question(String description) {
         this.description = description;
-        this.code=nextCodeVal++;
+        this.code=getNextCodeVal();
         this.creationDate=LocalDateTime.now();
     }
     public Question(Integer code,String description) {
@@ -39,7 +39,7 @@ public class Question extends Inquiry implements IForSaving, Serializable {
     public String getData() {
         return "description: "+description+", creationDate: "+creationDate;
     }
-    public Integer getCode() {
+    public int getCode() {
         return code;
     }
 

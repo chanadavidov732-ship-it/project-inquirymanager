@@ -15,10 +15,14 @@ public class Inquiry implements IForSaving, Serializable {
     private LocalDateTime creationDate;
 
     public static Integer getNextCodeVal() {
-        return nextCodeVal;
+        return nextCodeVal++;
     }
 
     public void handling() { }
+
+    public int getCode() {
+        return 0;
+    }
 
     @Override
     public String getFolderName() {
