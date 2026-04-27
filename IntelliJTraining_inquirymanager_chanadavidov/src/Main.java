@@ -1,3 +1,4 @@
+import Server.InquiryManagerServer;
 import business.InquiryManager;
 
 import java.io.IOException;
@@ -22,7 +23,8 @@ public class Main {
          inquiryManager.inquiryCreation();
        //  inquiryManager.processInquiryManager();
 
-
+        InquiryManagerServer server = new InquiryManagerServer();
+        server.startServer();
         // first running
 //        handling1.start();
 //        handling2.start();

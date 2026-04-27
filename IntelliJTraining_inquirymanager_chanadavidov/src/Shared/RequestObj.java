@@ -1,7 +1,26 @@
 package Shared;
 import java.io.Serializable;
 
-public class RequestObj implements Serializable {
+//public class RequestObj implements Serializable {
+//    private static final long serialVersionUID = 1L;
+//
+//    public enum Action {
+//        ADD_INQUIRY, GET_ALL, TEST
+//    }
+//
+//    private Action action;
+//    private Object params;
+//
+//    public RequestObj(Action action, Object params) {
+//        this.action = action;
+//        this.params = params;
+//    }
+//
+//    public Action getAction() { return action; }
+//    public Object getParams() { return params; }
+//}
+
+public class RequestObj  implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public enum Action {
@@ -9,18 +28,13 @@ public class RequestObj implements Serializable {
     }
 
     private Action action;
-//    private Object params;
-private Inquiry params;
+    private Inquiry object;
 
-//    public RequestObj(Action action, Object params) {
-//        this.action = action;
-//        this.params = params;
-//    }
-    public RequestObj(Action action, Inquiry params) {
+    public RequestObj(Action action, Inquiry obj) {
         this.action = action;
-        this.params = params;
+        this.object = obj;
     }
+
     public Action getAction() { return action; }
-//    public Object getParams() { return params; }
-    public Inquiry getParams() { return params; }
+    public Inquiry getParams() { return object; }
 }

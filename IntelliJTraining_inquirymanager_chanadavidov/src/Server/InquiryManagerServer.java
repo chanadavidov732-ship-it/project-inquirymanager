@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class InquiryManagerServer {
     private ServerSocket myServer;
-    private static final int PORT = 12345;
+    private static final int PORT = 8888;
     private boolean isRunning = false;
 
     public InquiryManagerServer() {

@@ -31,7 +31,8 @@ public class ServerService {
                 default:
                     return new ResponseObj(400, "FAILED", "Action not supported");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return new ResponseObj(500, "FAILED", e.getMessage());
         }
     }

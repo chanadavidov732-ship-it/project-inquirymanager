@@ -168,16 +168,16 @@ public class InquiryManager {
         return QInquiry;
     }
 
-//    public void addInquiryFromClient(Inquiry inquiry) throws IOException {
-//        HandleFiles handleFiles = new HandleFiles();
-//
-//        int nextId = handleFiles.getNextIdAndIncrement();
+    public void addInquiryFromClient(Inquiry inquiry) throws IOException {
+        HandleFiles handleFiles = new HandleFiles();
+
+        int nextId = Inquiry.getNextCodeVal();
 //        inquiry.setCode(nextId);
-//
-//        handleFiles.saveFile(inquiry);
-//
-//        QInquiry.add(inquiry);
-//    }
+
+        handleFiles.saveFile(inquiry);
+
+        QInquiry.add(inquiry);
+    }
 
     public List<Inquiry> getAllInquiriesForClient() {
         HandleFiles handleFiles = new HandleFiles();
