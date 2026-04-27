@@ -1,13 +1,9 @@
 package clientData;
 
-import Data.Complaint;
-import Data.Inquiry;
-import Data.Question;
-import Data.Request;
+import Shared.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
@@ -46,7 +42,7 @@ public class InquiryManagerClient {
     }
 
     public void printServerAnswer(ResponseObj respo){
-        if(respo.getStatus()==1)
+        if(respo.getStatus()==200)
             System.out.println("your request over successfully");
         else
             System.out.println("your request doesnt over");
@@ -80,7 +76,7 @@ public class InquiryManagerClient {
 
         System.out.println("press:\n1 - create complaint inquiry\n2 - create question inquiry\n3 - create request inquiry");
         int x = scanner.nextInt();
-
+        scanner.nextLine();
         System.out.println("enter description");
         String d = scanner.nextLine();
         String a;

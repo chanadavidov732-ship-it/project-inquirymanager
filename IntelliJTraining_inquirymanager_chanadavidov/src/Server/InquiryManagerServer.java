@@ -25,7 +25,7 @@ public class InquiryManagerServer {
             try {
                 Socket clientSocket = myServer.accept();
                 ClientHandler handler = new ClientHandler(clientSocket);
-                handler.run();
+                new Thread(handler).start();
             } catch (IOException e) {
                 if (isRunning) {
                     System.err.println("Accept failed: " + e.getMessage());

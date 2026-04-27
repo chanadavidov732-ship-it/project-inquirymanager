@@ -1,3 +1,22 @@
+//package Shared;
+//
+//import java.io.Serializable;
+//import java.time.LocalDateTime;
+//
+//public class Inquiry implements Serializable {
+//    private static final long serialVersionUID = 1L;
+//    public static Integer nextCodeVal = 1;
+//    private Integer code;
+//    private String description;
+//    private LocalDateTime creationDate;
+//
+//    public static Integer getNextCodeVal() {
+//        return nextCodeVal;
+//    }
+//
+//    public void handling() { }
+//}
+
 package Shared;
 
 import HandleStoreFiles.IForSaving;
@@ -68,3 +87,5 @@ public class Inquiry implements IForSaving, Serializable {
 
     }
 }
+
+
