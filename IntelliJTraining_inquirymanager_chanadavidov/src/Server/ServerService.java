@@ -16,8 +16,9 @@ public class ServerService {
             switch (request.getAction()) {
                 case ADD_INQUIRY:
                     Inquiry inquiry = (Inquiry) request.getParams();
+
                     // שימוש בפונקציה החדשה שיצרנו
-                    manager.addInquiryFromClient(inquiry);
+//                    manager.addInquiryFromClient(inquiry);
                     return new ResponseObj(200, "SUCCESS", inquiry.getCode());
 
                 case GET_ALL:

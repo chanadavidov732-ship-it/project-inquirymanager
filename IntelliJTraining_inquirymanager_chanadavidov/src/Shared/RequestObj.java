@@ -9,13 +9,18 @@ public class RequestObj implements Serializable {
     }
 
     private Action action;
-    private Object params;
+//    private Object params;
+private Inquiry params;
 
-    public RequestObj(Action action, Object params) {
+//    public RequestObj(Action action, Object params) {
+//        this.action = action;
+//        this.params = params;
+//    }
+    public RequestObj(Action action, Inquiry params) {
         this.action = action;
         this.params = params;
     }
-
     public Action getAction() { return action; }
-    public Object getParams() { return params; }
+//    public Object getParams() { return params; }
+    public Inquiry getParams() { return params; }
 }
