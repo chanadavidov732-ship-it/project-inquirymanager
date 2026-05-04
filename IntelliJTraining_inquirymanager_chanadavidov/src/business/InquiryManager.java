@@ -79,7 +79,7 @@ public class InquiryManager {
         if (scanner.hasNext()) {
            Inquiry.nextCodeVal = Integer.parseInt(scanner.next());
         }
-
+        scanner.close();
     }
 
     public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -119,6 +119,7 @@ public class InquiryManager {
                             }
                         };
                         handleFiles.readFile(temp);
+                        QInquiry.add(temp);
                     }
                 }
             }

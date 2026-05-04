@@ -37,11 +37,16 @@ public class Inquiry implements IForSaving, Serializable {
     public static Integer getNextCodeVal() {
         return nextCodeVal++;
     }
+    public Inquiry() {}
+
+    public Inquiry(Integer code) {
+        this.code = code;
+    }
 
     public void handling() { }
 
     public int getCode() {
-        return 0;
+        return code;
     }
 
     @Override

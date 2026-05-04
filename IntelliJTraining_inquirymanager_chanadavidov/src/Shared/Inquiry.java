@@ -14,7 +14,12 @@ public class Inquiry implements IForSaving, Serializable {
     private Integer code;
     private String description;
     private LocalDateTime creationDate;
+    private Status status;
 
+    public enum Status{
+        OPEN,CANCELED,IN_TREATMENT,IN_HISTORY
+    }
+    public Status getStatus(){return status;}
     public static Integer getNextCodeVal() {
         return nextCodeVal++;
     }
@@ -22,6 +27,8 @@ public class Inquiry implements IForSaving, Serializable {
     public void handling() { }
 
     public int getCode() {
+        if(code!=null)
+            return code;
         return 0;
     }
 

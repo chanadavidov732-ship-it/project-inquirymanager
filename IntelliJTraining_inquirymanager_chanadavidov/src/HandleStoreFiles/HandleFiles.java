@@ -83,7 +83,7 @@ public class HandleFiles {
 
     public List<Inquiry> readAllInquiries() {
         List<Inquiry> allInquiries = new ArrayList<>();
-        String[] folders = {"Data.Request", "Data.Question", "Data.Complaint"};
+        String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};
 
         for (String folderPath : folders) {
             File folder = new File(folderPath);

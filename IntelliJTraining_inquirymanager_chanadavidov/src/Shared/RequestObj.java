@@ -24,7 +24,7 @@ public class RequestObj  implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public enum Action {
-        ADD_INQUIRY, GET_ALL, TEST
+        ADD_INQUIRY, GET_ALL,GET_INQUIRY_STATUS, TEST
     }
 
     private Action action;

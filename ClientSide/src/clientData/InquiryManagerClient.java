@@ -27,45 +27,32 @@ public class InquiryManagerClient {
         ResponseObj responseObj;
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - exit");
+        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - exit");
         x = scanner.nextInt();
-        while(x!=3) {
+        while(x!=4) {
             ro=execut(x);
             objectOutputStream.writeObject(ro);
             objectOutputStream.flush();
 
             printServerAnswer((ResponseObj)in.readObject()) ;
-            System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - exit");
+            System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - exit");
             x = scanner.nextInt();
         }
         connectToServer.close();
     }
 
-    public void printServerAnswer(ResponseObj respo){
-        if(respo.getStatus()==200)
-            System.out.println("your request over successfully");
-        else
-            System.out.println("your request doesnt over");
-        System.out.println("the server massage is :\n"+respo.getMessage());
-
-        //in case the client ask all inquiries the respo is list
-        if (respo.getResult() instanceof List<?> list) {
-            for (Inquiry i :(List<Inquiry>) respo.getResult()) {
-                System.out.println(i.toString());
-            }
-        }
-
-        //in case the client create inquiry the respo is string
-        else
-            System.out.println(respo.getResult());
-
-    }
-
     public RequestObj execut(int x)  {
         RequestObj ro=null;
+        Scanner scanner = new Scanner(System.in);
+        int y;
         switch (x) {
             case 1 -> ro=new RequestObj(RequestObj.Action.GET_ALL,new Inquiry());
             case 2 -> ro=new RequestObj(RequestObj.Action.ADD_INQUIRY,createNewInquiry());
+            case 3 -> {
+                System.out.println("enter inquiry code");
+                y=  scanner.nextInt();
+                ro=new RequestObj(RequestObj.Action.GET_INQUIRY_STATUS,new Inquiry(y));
+            }
         }
         return ro;
     }
@@ -91,5 +78,24 @@ public class InquiryManagerClient {
             case 3 -> inquiry=new Request(d);
         }
         return inquiry;
+    }
+    public void printServerAnswer(ResponseObj respo){
+        if(respo.getStatus()==200)
+            System.out.println("your request over successfully");
+        else
+            System.out.println("your request doesnt over");
+        System.out.println("the server massage is :\n"+respo.getMessage());
+
+        //in case the client ask all inquiries the respo is list
+        if (respo.getResult() instanceof List<?> list) {
+            for (Inquiry i :(List<Inquiry>) respo.getResult()) {
+                System.out.println(i.toString());
+            }
+        }
+
+        //in case the client create inquiry the respo is string
+        else
+            System.out.println(respo.getResult());
+
     }
 }

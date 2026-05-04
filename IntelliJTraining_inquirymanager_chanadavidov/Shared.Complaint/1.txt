@@ -1,0 +1,1 @@
+inquiry type: Shared.Complaint, number inquiry: 1, description: description: some, creationDate: 2026-05-04T18:05:50.665778800, assignedBranch: 1comp

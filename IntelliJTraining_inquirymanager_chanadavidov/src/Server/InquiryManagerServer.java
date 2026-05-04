@@ -1,5 +1,8 @@
 package Server;
 
+import Shared.Inquiry;
+import business.InquiryManager;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -46,7 +49,14 @@ public class InquiryManagerServer {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, IllegalAccessException {
+        InquiryManager inquiryManager = new InquiryManager();
+        inquiryManager.inquiryCreation();
+
+
+        for (Inquiry n: InquiryManager.getQInquiry()){
+            System.out.println("pppp"+n.getCode());
+        }
         InquiryManagerServer server = new InquiryManagerServer();
         server.startServer();
     }
