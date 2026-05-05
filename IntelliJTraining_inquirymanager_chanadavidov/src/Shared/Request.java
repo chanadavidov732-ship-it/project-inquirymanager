@@ -27,8 +27,9 @@ public class Request extends Inquiry implements IForSaving, Serializable {
         this.description=description;
         //this.creationDate=creationDate;
     }
+    @Override
     public int getCode() {
-        return code;
+        return code == null ? 0 : code;
     }
 
     @Override
@@ -37,7 +38,7 @@ public class Request extends Inquiry implements IForSaving, Serializable {
     }
     @Override
     public String getFileName() {
-        return code.toString();
+        return String.valueOf(code);
     }
 
     @Override

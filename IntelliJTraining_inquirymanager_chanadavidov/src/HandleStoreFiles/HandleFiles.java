@@ -11,7 +11,7 @@ public class HandleFiles {
 
     public void readFile(IForSaving iForSaving) throws FileNotFoundException {
         List<String> values=new ArrayList<>();
-        File dataFile = new File(iForSaving.getFolderName(),iForSaving.getFileName());
+        File dataFile = new File(iForSaving.getFolderName(),iForSaving.getFileName()+ ".txt");
         if(!dataFile.exists())
             return;
         Scanner scanner =new Scanner(dataFile);
@@ -32,9 +32,12 @@ public class HandleFiles {
             folder.mkdirs();
         File dataFile = new File(folder, iForSaving.getFileName() + ".txt");
         FileWriter writer = new FileWriter(dataFile, false);
-        writer.write("inquiry type: "+ iForSaving.getFolderName()+
-                ", number inquiry: "+ iForSaving.getFileName()+
-                ", description: "+ iForSaving.getData());
+//        writer.write("inquiry type: "+ iForSaving.getFolderName()+
+//                ", number inquiry: "+ iForSaving.getFileName()+
+//                ", description: "+ iForSaving.getData());
+        writer.write(iForSaving.getFolderName() + "," +
+                iForSaving.getFileName() + "," +
+                iForSaving.getData());
         writer.flush();
         writer.close();
         System.out.println("finish saveFile");

@@ -27,11 +27,13 @@ public class Inquiry implements IForSaving, Serializable {
     public void handling() { }
 
     public int getCode() {
-        if(code!=null)
-            return code;
-        return 0;
+        if (code==null)
+            return  0;
+        return code;
     }
-
+    public void setCode(Integer code) {
+        this.code = code;
+    }
     @Override
     public String getFolderName() {
         File folder=new File(getClass().getName());
@@ -52,25 +54,21 @@ public class Inquiry implements IForSaving, Serializable {
 
     @Override
     public void parseFromFile(List<String> values) {
-        //the order of items:values[1]= type of inquiry,values[1]= code,values[2]= dsceription , values[3]=creationDate ,values[4]=assignedBranch
+        //the order of items:values[1]= type of inquiry,values[1]= code,values[2]= description , values[3]=creationDate ,values[4]=assignedBranch
 
         String folderN=values.get(0);
-
-        //i adds an empty constructor on all inquirys
-        if(folderN.contains("Request")) {
-            Request newIn=new Request();
-            newIn.fillDataByUser(Integer.parseInt(values.get(1)),values.get(2));
-            InquiryManager.getQInquiry().add(newIn);
+        if (this instanceof Request) {
+            //or leave the code with .replace("creationDate: ", "") or to delete on function getData()
+            ((Request)this).fillDataByUser(Integer.parseInt(values.get(1).replace("creationDate: ", "")), values.get(2).replace("description: ", ""));
         }
-        else if(folderN.contains("Question")){
-            Question newIn=new Question();
-            newIn.fillDataByUser(Integer.parseInt(values.get(1)),values.get(2));
-            InquiryManager.getQInquiry().add(newIn);
+        else if (this instanceof Question) {
+            ((Question)this).fillDataByUser(Integer.parseInt(values.get(1).replace("creationDate: ", "")), values.get(2).replace("description: ", ""));
         }
-        else if (folderN.contains("Complaint")){
-            Complaint newIn=new Complaint();
-            newIn.fillDataByUser(Integer.parseInt(values.get(1)),values.get(2),values.get(4));
-            InquiryManager.getQInquiry().add(newIn);
+        else if (this instanceof Complaint) {
+            ((Complaint)this).fillDataByUser(
+                    Integer.parseInt(values.get(1).replace("creationDate: ", "")),
+                    values.get(2).replace("description: ", ""),
+                    values.get(4) );
         }
 
     }

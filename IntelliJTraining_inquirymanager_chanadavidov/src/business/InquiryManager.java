@@ -1,7 +1,6 @@
 package business;
 
 import Shared.*;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -26,8 +25,7 @@ public class InquiryManager {
             before();
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+            throw new RuntimeException(e);}
 
         QRepresentative = new LinkedList<>();
         try {
@@ -43,6 +41,7 @@ public class InquiryManager {
         }
         try {
             beforeNextVal();
+
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -67,7 +66,6 @@ public class InquiryManager {
             System.out.println("to add representative press 1 to exit enter any key");
             x = scanner.nextInt();
         }
-        scanner.close();
     }
 
     public static void beforeNextVal() throws FileNotFoundException {
@@ -99,7 +97,7 @@ public class InquiryManager {
     }
 
     public static void before() throws FileNotFoundException {
-        String[] folders = {"Data.Request", "Data.Question", "Data.Complaint"};
+        String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};
         HandleFiles handleFiles = new HandleFiles();
         for (String fn : folders) {
             File folder = new File(fn);
@@ -108,16 +106,22 @@ public class InquiryManager {
                 if (files != null) {
                     for (File file : files) {
                         String fileName = file.getName().replace(".txt", "");
-                        Inquiry temp = new Inquiry() {
-                            @Override
-                            public String getFolderName() {
-                                return fn;
-                            }
-                            @Override
-                            public String getFileName() {
-                                return fileName;
-                            }
-                        };
+
+                        Inquiry temp;
+                        switch (fn) {
+                            case "Shared.Question":
+                                temp = new Question();
+                                break;
+                            case "Shared.Request":
+                                temp = new Request();
+                                break;
+                            case "Shared.Complaint":
+                                temp = new Complaint();
+                                break;
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + fn);
+                        }
+                        temp.setCode(Integer.parseInt(fileName));
                         handleFiles.readFile(temp);
                         QInquiry.add(temp);
                     }
@@ -127,17 +131,18 @@ public class InquiryManager {
     }
 
     public void inquiryCreation() throws IOException, IllegalAccessException {
+        HandleFiles im = new HandleFiles();
         Scanner scanner = new Scanner(System.in);
         System.out.println("press:\n1 for question\n2 for request \n3 for complaint");
         int x = scanner.nextInt();
-        QInquiry.add(switch (x) {
+        Inquiry in= (switch (x) {
             case 1 -> new Question("dds");
             case 2 -> new Request("jhjj");
             case 3 -> new Complaint("1comp", "some");
             default -> throw new IllegalStateException("Unexpected value: " + x);
         });
-        HandleFiles im = new HandleFiles();
-        im.saveFile(QInquiry.peek());
+        QInquiry.add(in);
+        im.saveFile(in);
         saveNextValFile();
     }
 
