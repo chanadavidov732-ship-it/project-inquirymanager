@@ -27,7 +27,7 @@ public class InquiryManagerClient {
         ResponseObj responseObj;
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - exit");
+        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - exit");
         x = scanner.nextInt();
         while(x!=4) {
             ro=execut(x);
@@ -35,7 +35,7 @@ public class InquiryManagerClient {
             objectOutputStream.flush();
 
             printServerAnswer((ResponseObj)in.readObject()) ;
-            System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - exit");
+            System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - exit");
             x = scanner.nextInt();
         }
         connectToServer.close();
@@ -52,6 +52,16 @@ public class InquiryManagerClient {
                 System.out.println("enter inquiry code");
                 y=  scanner.nextInt();
                 ro=new RequestObj(RequestObj.Action.GET_INQUIRY_STATUS,new Inquiry(y));
+            }
+            case 4 -> {
+                Scanner sc = new Scanner(System.in);
+                System.out.println("Enter month (1-12):");
+                int m = sc.nextInt();
+                System.out.println("Enter year (e.g. 2024):");
+                y = sc.nextInt();
+
+                Inquiry info = new Inquiry();
+                ro = new RequestObj(RequestObj.Action.GET_COUNT_BY_MONTH, info);
             }
         }
         return ro;

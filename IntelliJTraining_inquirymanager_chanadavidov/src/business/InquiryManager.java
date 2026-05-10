@@ -189,4 +189,19 @@ public class InquiryManager {
         HandleFiles handleFiles = new HandleFiles();
         return handleFiles.readAllInquiries();
     }
+
+    public long getInquiryCountByMonth(int month, int year) {
+        HandleFiles handleFiles = new HandleFiles();
+        List<Inquiry> allInquiries = handleFiles.readAllInquiries();
+
+        return allInquiries.stream()
+                .filter(inq -> {
+                    if (inq == null || inq.getCreationDate() == null) {
+                        return false;
+                    }
+                    return inq.getCreationDate().getMonthValue() == month &&
+                            inq.getCreationDate().getYear() == year;
+                })
+                .count();
+    }
 }

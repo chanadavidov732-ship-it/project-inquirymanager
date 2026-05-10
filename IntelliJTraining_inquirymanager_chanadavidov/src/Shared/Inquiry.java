@@ -5,6 +5,7 @@ import business.InquiryManager;
 
 import java.io.File;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +16,14 @@ public class Inquiry implements IForSaving, Serializable {
     private String description;
     private LocalDateTime creationDate;
     private Status status;
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     public enum Status{
         OPEN,CANCELED,IN_TREATMENT,IN_HISTORY

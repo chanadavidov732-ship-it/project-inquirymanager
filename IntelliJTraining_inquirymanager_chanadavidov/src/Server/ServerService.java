@@ -22,7 +22,6 @@ public class ServerService {
                 case ADD_INQUIRY:
                     Inquiry inquiry = (Inquiry) request.getParams();
 
-                    // שימוש בפונקציה החדשה שיצרנו
 //                    manager.addInquiryFromClient(inquiry);
                     return new ResponseObj(200, "SUCCESS", inquiry.getCode());
 
@@ -34,9 +33,15 @@ public class ServerService {
                     Inquiry inquiry2 = (Inquiry) request.getParams();
                     return new ResponseObj(200, "SUCCESS",getStatusForClient(inquiry2.getCode()));
 
-                case TEST:
-                    return new ResponseObj(200, "SUCCESS", "SERVER_READY");
+//                case TEST:
+//                    return new ResponseObj(200, "SUCCESS", "SERVER_READY");
 
+                case GET_COUNT_BY_MONTH:
+                    Inquiry params = request.getParams();
+                    int month = params.getCode();
+                    int year = Integer.parseInt(params.getDescription());
+                    long count = manager.getInquiryCountByMonth(month, year);
+                    return new ResponseObj(200, "SUCCESS", count);
                 default:
                     return new ResponseObj(400, "FAILED", "Action not supported");
             }
