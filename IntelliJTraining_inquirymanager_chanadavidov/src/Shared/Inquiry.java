@@ -1,7 +1,6 @@
 package Shared;
 
 import HandleStoreFiles.IForSaving;
-import business.InquiryManager;
 
 import java.io.File;
 import java.io.Serializable;
@@ -17,7 +16,7 @@ public class Inquiry implements IForSaving, Serializable {
     private Status status;
 
     public enum Status{
-        OPEN,CANCELED,IN_TREATMENT,IN_HISTORY
+        OPEN,CANCELED,IN_TREATMENT, TREATED
     }
     public Status getStatus(){return status;}
     public static Integer getNextCodeVal() {
@@ -36,6 +35,8 @@ public class Inquiry implements IForSaving, Serializable {
     }
     @Override
     public String getFolderName() {
+        if(this.status == Status.CANCELED || this.status == Status.TREATED)
+            return "history";
         File folder=new File(getClass().getName());
         if(!folder.exists())
             folder.mkdir();
