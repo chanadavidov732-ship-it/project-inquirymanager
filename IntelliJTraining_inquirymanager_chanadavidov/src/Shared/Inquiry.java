@@ -1,6 +1,8 @@
 package Shared;
 
+import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
+import business.InquiryManager;
 
 import java.io.File;
 import java.io.Serializable;
@@ -19,6 +21,12 @@ public class Inquiry implements IForSaving, Serializable {
         OPEN,CANCELED,IN_TREATMENT, TREATED
     }
     public Status getStatus(){return status;}
+    public void setStatus(Status newStatus){
+        InquiryManager manager = new InquiryManager();
+        this.status = newStatus;
+        if(this.status == Status.CANCELED || this.status == Status.TREATED)
+            manager.transferToHistory(this);
+    }
     public static Integer getNextCodeVal() {
         return nextCodeVal++;
     }
