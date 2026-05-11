@@ -50,13 +50,12 @@ public class InquiryManagerServer {
     }
 
     public static void main(String[] args) throws IOException, IllegalAccessException {
-        InquiryManager inquiryManager = new InquiryManager();
-        inquiryManager.inquiryCreation();
-
-
-        for (Inquiry n: InquiryManager.getQInquiry()){
-            System.out.println("pppp"+n.getCode());
-        }
+//        InquiryManager inquiryManager = new InquiryManager();
+//        inquiryManager.inquiryCreation();
+//
+//        for (Inquiry n: InquiryManager.getQInquiry()){
+//            System.out.println("pppp"+n.getCode());
+//        }
         InquiryManagerServer server = new InquiryManagerServer();
         server.startServer();
     }

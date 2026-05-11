@@ -15,18 +15,32 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        try (ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
 
-            RequestObj request = (RequestObj) in.readObject();
+        try (
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+        ) {
+            while (true) {
+                RequestObj request = (RequestObj) in.readObject();
 
-            ResponseObj response = service.handleRequest(request);
+                if (request == null) break;
 
-            out.writeObject(response);
-            out.flush();
+                ResponseObj response = service.handleRequest(request);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+                out.writeObject(response);
+                out.flush();
+            }
+
+        }
+
+        catch (Exception e) {
+            System.out.println("Client disconnected or error: " + e.getMessage());
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

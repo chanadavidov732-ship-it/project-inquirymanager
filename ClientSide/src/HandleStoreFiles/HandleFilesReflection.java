@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -92,6 +93,8 @@ public class HandleFilesReflection extends HandleFiles {
 
             if (field.getType() == Integer.class || field.getType() == int.class) {
                 field.set(newO, Integer.parseInt(value));
+            } else if(field.getType() == LocalDateTime.class){
+                field.set(newO, LocalDateTime.parse(value));
             } else {
                 field.set(newO, value);
             }

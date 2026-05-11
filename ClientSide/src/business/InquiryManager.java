@@ -1,9 +1,6 @@
 package business;
 
-import HandleStoreFiles.HandleFiles;
-import HandleStoreFiles.HandleFilesReflection;
 import Shared.*;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -13,6 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
+
+import HandleStoreFiles.HandleFiles;
+import HandleStoreFiles.HandleFilesReflection;
 
 public class InquiryManager {
 
@@ -25,8 +25,7 @@ public class InquiryManager {
             before();
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+            throw new RuntimeException(e);}
 
         QRepresentative = new LinkedList<>();
         try {
@@ -42,6 +41,7 @@ public class InquiryManager {
         }
         try {
             beforeNextVal();
+
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -66,7 +66,6 @@ public class InquiryManager {
             System.out.println("to add representative press 1 to exit enter any key");
             x = scanner.nextInt();
         }
-        scanner.close();
     }
 
     public static void beforeNextVal() throws FileNotFoundException {
@@ -76,9 +75,9 @@ public class InquiryManager {
         }
         Scanner scanner = new Scanner(dataFile);
         if (scanner.hasNext()) {
-           Inquiry.nextCodeVal = Integer.parseInt(scanner.next());
+            Inquiry.nextCodeVal = Integer.parseInt(scanner.next());
         }
-
+        scanner.close();
     }
 
     public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -91,14 +90,14 @@ public class InquiryManager {
                     String fileName = file.getName().replace(".txt", "");
                     System.out.println(fileName);
                     QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
-                    hfr.deleteCsv("Representative/" + fileName);
+                    //hfr.deleteCsv("Representative/" + fileName);
                 }
             }
         }
     }
 
     public static void before() throws FileNotFoundException {
-        String[] folders = {"Data.Request", "Data.Question", "Data.Complaint"};
+        String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};
         HandleFiles handleFiles = new HandleFiles();
         for (String fn : folders) {
             File folder = new File(fn);
@@ -107,35 +106,45 @@ public class InquiryManager {
                 if (files != null) {
                     for (File file : files) {
                         String fileName = file.getName().replace(".txt", "");
-                        Inquiry temp = new Inquiry() {
-                            @Override
-                            public String getFolderName() {
-                                return fn;
-                            }
-                            @Override
-                            public String getFileName() {
-                                return fileName;
-                            }
-                        };
+
+                        Inquiry temp;
+                        switch (fn) {
+                            case "Shared.Question":
+                                temp = new Question();
+                                break;
+                            case "Shared.Request":
+                                temp = new Request();
+                                break;
+                            case "Shared.Complaint":
+                                temp = new Complaint();
+                                break;
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + fn);
+                        }
+                        temp.setCode(Integer.parseInt(fileName));
                         handleFiles.readFile(temp);
+                        QInquiry.add(temp);
                     }
                 }
             }
         }
     }
 
+    @Deprecated
     public void inquiryCreation() throws IOException, IllegalAccessException {
+        HandleFiles im = new HandleFiles();
         Scanner scanner = new Scanner(System.in);
         System.out.println("press:\n1 for question\n2 for request \n3 for complaint");
         int x = scanner.nextInt();
-        QInquiry.add(switch (x) {
+        Inquiry in= (switch (x) {
             case 1 -> new Question("dds");
             case 2 -> new Request("jhjj");
             case 3 -> new Complaint("1comp", "some");
             default -> throw new IllegalStateException("Unexpected value: " + x);
         });
-        HandleFiles im = new HandleFiles();
-        im.saveFile(QInquiry.peek());
+        in.setStatus(Inquiry.Status.OPEN);
+        QInquiry.add(in);
+        im.saveFile(in);
         saveNextValFile();
     }
 
@@ -153,10 +162,14 @@ public class InquiryManager {
     }
 
     public void processInquiryManager() {
-        while (this.QInquiry.peek() != null) {
-            this.QInquiry.poll().handling();
+        while (!QInquiry.isEmpty()) {
+            Thread t = new Thread(() -> {
+                QInquiry.poll().handling();
+            });
+            t.start();
             try {
-                Thread.currentThread().sleep(3 * 1000);
+                Thread.sleep(3 * 1000);
+                t.join();
             } catch (InterruptedException e) {
                 System.out.println(e.toString());
             }
@@ -178,7 +191,7 @@ public class InquiryManager {
         QInquiry.add(inquiry);
     }
 
-    public List<Inquiry> getAllInquiriesForClient() {
+    public List<Inquiry> getAllInquiriesForClient() throws FileNotFoundException {
         HandleFiles handleFiles = new HandleFiles();
         return handleFiles.readAllInquiries();
     }

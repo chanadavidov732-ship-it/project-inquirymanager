@@ -1,83 +1,10 @@
-//package Shared;
-//
-//import java.time.LocalDateTime;
-//
-//public class Complaint extends Inquiry {
-//    private Integer code;
-//    private String description;
-//    private LocalDateTime creationDate;
-//    private String assignedBranch;
-//
-//    public Complaint(){}
-//    public Complaint(String assignedBranch, String description) {
-//        this.code=nextCodeVal++;
-//        this.creationDate=LocalDateTime.now();
-//        this.assignedBranch = assignedBranch;
-//        this.description = description;
-//    }
-//    public Complaint(Integer code,String description,String assignedBranch) {
-//        this.code=code;
-//        this.description=description;
-//        this.assignedBranch = assignedBranch;
-//        //this.creationDate=creationDate;
-//    }
-//
-//    public void fillDataByUser(Integer code, String description, String assignedBranch){
-//        this.code=code;
-//        this.description=description;
-//        //this.creationDate= creationDate;
-//        this.assignedBranch=assignedBranch;
-//    }
-//
-//    @Override
-//    public void handling(){
-//        System.out.println("The system is currently processing a complaint number "+this.code+".......");
-//    }
-//
-//    public String getAssignedBranch() {
-//        return assignedBranch;
-//    }
-//
-//    public void setAssignedBranch(String assignedBranch) {
-//        this.assignedBranch = assignedBranch;
-//    }
-//
-//    public LocalDateTime getCreationDate() {
-//        return creationDate;
-//    }
-//
-//    public void setCreationDate(LocalDateTime creationDate) {
-//        this.creationDate = creationDate;
-//    }
-//
-//    public String getDescription() {
-//        return description;
-//    }
-//
-//    public void setDescription(String description) {
-//        this.description = description;
-//    }
-//
-//    public int getCode() {
-//        return code;
-//    }
-//
-//    public void setCode(Integer code) {
-//        this.code = code;
-//    }
-//}
-
 package Shared;
 
-import HandleStoreFiles.IForSaving;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class Complaint extends Inquiry  implements IForSaving, Serializable {
-    private Integer code;
-    private String description;
-    private LocalDateTime creationDate;
+public class Complaint extends Inquiry  {
+
     private String assignedBranch;
 
     public Complaint(){}
@@ -86,18 +13,20 @@ public class Complaint extends Inquiry  implements IForSaving, Serializable {
         this.creationDate=LocalDateTime.now();
         this.assignedBranch = assignedBranch;
         this.description = description;
+        this.status = Status.OPEN;
     }
     public Complaint(Integer code,String description,String assignedBranch) {
         this.code=code;
         this.description=description;
         this.assignedBranch = assignedBranch;
-        //this.creationDate=creationDate;
+        this.creationDate=LocalDateTime.now();
+        this.status = Status.OPEN;
     }
 
-    public void fillDataByUser(Integer code, String description, String assignedBranch){
+    public void fillDataByUser(Integer code, String description, String assignedBranch,LocalDateTime creationDate){
         this.code=code;
         this.description=description;
-        //this.creationDate= creationDate;
+        this.creationDate= creationDate;
         this.assignedBranch=assignedBranch;
     }
 
@@ -108,44 +37,29 @@ public class Complaint extends Inquiry  implements IForSaving, Serializable {
 
     @Override
     public String getFileName() {
-        return code.toString();
+        return String.valueOf(code);
     }
 
     @Override
     public String getData() {
-        return "description: "+description+", creationDate: "+creationDate+", assignedBranch: "+assignedBranch;
+        return this.code+","+this.description+","+this.creationDate.toString()+","+this.assignedBranch;
     }
 
-    public String getAssignedBranch() {
-        return assignedBranch;
-    }
-
-    public void setAssignedBranch(String assignedBranch) {
-        this.assignedBranch = assignedBranch;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    @Override
     public int getCode() {
-        return code;
+        return code == null ? 0 : code;
     }
 
     public void setCode(Integer code) {
         this.code = code;
     }
-}
 
+    public void parseFromFile(List<String> values) {
+        String folderN=values.get(0);
+        (this).fillDataByUser(Integer.parseInt(values.get(1))
+                , values.get(2)
+                , values.get(3)
+                , LocalDateTime.parse(values.get(3))
+        );
+    }
+}

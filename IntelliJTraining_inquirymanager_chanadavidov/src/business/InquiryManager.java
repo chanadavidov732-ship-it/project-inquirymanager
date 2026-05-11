@@ -90,7 +90,7 @@ public class InquiryManager {
                     String fileName = file.getName().replace(".txt", "");
                     System.out.println(fileName);
                     QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
-                    hfr.deleteCsv("Representative/" + fileName);
+                    //hfr.deleteCsv("Representative/" + fileName);
                 }
             }
         }
@@ -130,6 +130,7 @@ public class InquiryManager {
         }
     }
 
+    @Deprecated
     public void inquiryCreation() throws IOException, IllegalAccessException {
         HandleFiles im = new HandleFiles();
         Scanner scanner = new Scanner(System.in);
@@ -146,7 +147,7 @@ public class InquiryManager {
         saveNextValFile();
     }
 
-    public void saveNextValFile() throws IOException, IllegalAccessException {
+    public static void saveNextValFile() throws IOException, IllegalAccessException {
         File dataFile = new File( "nextVal.txt");
         if (dataFile.getParentFile() != null) {
             dataFile.getParentFile().mkdirs();
@@ -160,10 +161,14 @@ public class InquiryManager {
     }
 
     public void processInquiryManager() {
-        while (this.QInquiry.peek() != null) {
-            this.QInquiry.poll().handling();
+        while (!QInquiry.isEmpty()) {
+            Thread t = new Thread(() -> {
+                QInquiry.poll().handling();
+            });
+            t.start();
             try {
-                Thread.currentThread().sleep(3 * 1000);
+                Thread.sleep(3 * 1000);
+                t.join();
             } catch (InterruptedException e) {
                 System.out.println(e.toString());
             }
@@ -185,7 +190,7 @@ public class InquiryManager {
         QInquiry.add(inquiry);
     }
 
-    public List<Inquiry> getAllInquiriesForClient() {
+    public List<Inquiry> getAllInquiriesForClient() throws FileNotFoundException {
         HandleFiles handleFiles = new HandleFiles();
         return handleFiles.readAllInquiries();
     }
