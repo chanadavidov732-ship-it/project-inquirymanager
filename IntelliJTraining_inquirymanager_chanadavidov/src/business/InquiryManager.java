@@ -169,17 +169,7 @@ public class InquiryManager {
             }
         }
     }
-    public void transferToHistory(Inquiry inquiry){
-        HandleFiles handleFiles = new HandleFiles();
-        File file = new File(inquiry.getClass().getName()+"/"+inquiry.getFileName());
-        if(file.delete()) {
-            try {
-                handleFiles.saveFile(inquiry);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+
 
     public static Queue<Inquiry> getQInquiry(){
         return QInquiry;

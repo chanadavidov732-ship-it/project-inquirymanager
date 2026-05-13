@@ -5,6 +5,7 @@ import HandleStoreFiles.IForSaving;
 import business.InquiryManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,16 +23,29 @@ public class Inquiry implements IForSaving, Serializable {
     }
     public Status getStatus(){return status;}
     public void setStatus(Status newStatus){
-        InquiryManager manager = new InquiryManager();
         this.status = newStatus;
         if(this.status == Status.CANCELED || this.status == Status.TREATED)
-            manager.transferToHistory(this);
+            transferToHistory();
+    }
+    public void transferToHistory(){
+        HandleFiles handleFiles = new HandleFiles();
+        File file = new File(this.getClass().getName()+"/"+this.getFileName());
+        if(file.delete()) {
+            try {
+                handleFiles.saveFile(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void handling() {
+        System.out.println("The system handle the inquiry"+ getCode());
+        /////////////////////////////////////////////////////////השהיה לפי סוג פניה , מה כמה ואיך?
     }
     public static Integer getNextCodeVal() {
         return nextCodeVal++;
     }
-
-    public void handling() { }
 
     public int getCode() {
         if (code==null)
