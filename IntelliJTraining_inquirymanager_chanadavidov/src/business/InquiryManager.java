@@ -169,7 +169,7 @@ public class InquiryManager {
             }
         }
     }
-    public boolean transferToHistory(Inquiry inquiry){
+    public void transferToHistory(Inquiry inquiry){
         HandleFiles handleFiles = new HandleFiles();
         File file = new File(inquiry.getClass().getName()+"/"+inquiry.getFileName());
         if(file.delete()) {
@@ -179,8 +179,6 @@ public class InquiryManager {
                 throw new RuntimeException(e);
             }
         }
-        else return false;
-        return true;
     }
 
     public static Queue<Inquiry> getQInquiry(){
