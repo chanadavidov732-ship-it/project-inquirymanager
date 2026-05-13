@@ -1,6 +1,9 @@
 package HandleStoreFiles;
 
+import Shared.Complaint;
 import Shared.Inquiry;
+import Shared.Question;
+import Shared.Request;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,7 +14,7 @@ public class HandleFiles {
 
     public void readFile(IForSaving iForSaving) throws FileNotFoundException {
         List<String> values=new ArrayList<>();
-        File dataFile = new File(iForSaving.getFolderName(),iForSaving.getFileName());
+        File dataFile = new File(iForSaving.getFolderName(),iForSaving.getFileName()+ ".txt");
         if(!dataFile.exists())
             return;
         Scanner scanner =new Scanner(dataFile);
@@ -20,7 +23,7 @@ public class HandleFiles {
             String data=scanner.nextLine();
             String[] parts = data.split(",");
             for (String part : parts) {
-                 values.add(part.trim());
+                values.add(part.trim());
             }
         }
         iForSaving.parseFromFile(values);
@@ -32,9 +35,9 @@ public class HandleFiles {
             folder.mkdirs();
         File dataFile = new File(folder, iForSaving.getFileName() + ".txt");
         FileWriter writer = new FileWriter(dataFile, false);
-        writer.write("inquiry type: "+ iForSaving.getFolderName()+
-                ", number inquiry: "+ iForSaving.getFileName()+
-                ", description: "+ iForSaving.getData());
+        //writer.write(iForSaving.getData());
+        writer.write(iForSaving.getFolderName() + "," +
+                iForSaving.getData());
         writer.flush();
         writer.close();
         System.out.println("finish saveFile");
@@ -49,7 +52,7 @@ public class HandleFiles {
     }
 
     public void updateFile(IForSaving iForSaving) throws IOException {
-       saveFile(iForSaving);
+        saveFile(iForSaving);
         System.out.println("updateFile    "+ iForSaving.getFileName());
     }
 
@@ -81,9 +84,9 @@ public class HandleFiles {
 //        return currentId;
 //    }
 
-    public List<Inquiry> readAllInquiries() {
+    public List<Inquiry> readAllInquiries() throws FileNotFoundException {
         List<Inquiry> allInquiries = new ArrayList<>();
-        String[] folders = {"Data.Request", "Data.Question", "Data.Complaint"};
+        String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};
 
         for (String folderPath : folders) {
             File folder = new File(folderPath);
@@ -91,11 +94,40 @@ public class HandleFiles {
                 File[] files = folder.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        Inquiry inq = loadInquiryFromFile(file);
-                        if (inq != null) {
-                            allInquiries.add(inq);
+                        String fileName =
+                                file.getName().replace(".txt", "");
+
+                        Inquiry inquiry;
+
+                        switch (folderPath) {
+
+                            case "Shared.Question":
+                                inquiry = new Question();
+                                break;
+
+                            case "Shared.Request":
+                                inquiry = new Request();
+                                break;
+
+                            case "Shared.Complaint":
+                                inquiry = new Complaint();
+                                break;
+
+                            default:
+                                continue;
                         }
+
+                        inquiry.setCode(Integer.parseInt(fileName));
+
+                        readFile(inquiry);
+
+                        allInquiries.add(inquiry);
                     }
+//                        Inquiry inq = loadInquiryFromFile(file);
+//                        if (inq != null) {
+//                            allInquiries.add(inq);
+//                        }
+//                    }
                 }
             }
         }

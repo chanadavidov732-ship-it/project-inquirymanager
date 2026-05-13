@@ -23,6 +23,7 @@ public class InquiryManagerClient {
         RequestObj ro;
         int x;
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(connectToServer.getOutputStream());
+        objectOutputStream.flush();
         ObjectInputStream in = new ObjectInputStream(connectToServer.getInputStream());
         ResponseObj responseObj;
 
@@ -39,6 +40,7 @@ public class InquiryManagerClient {
             x = scanner.nextInt();
         }
         connectToServer.close();
+
     }
 
     public RequestObj execut(int x)  {
@@ -46,12 +48,12 @@ public class InquiryManagerClient {
         Scanner scanner = new Scanner(System.in);
         int y;
         switch (x) {
-            case 1 -> ro=new RequestObj(RequestObj.Action.GET_ALL,new Inquiry());
+            case 1 -> ro=new RequestObj(RequestObj.Action.GET_ALL, null);
             case 2 -> ro=new RequestObj(RequestObj.Action.ADD_INQUIRY,createNewInquiry());
             case 3 -> {
                 System.out.println("enter inquiry code");
                 y=  scanner.nextInt();
-                ro=new RequestObj(RequestObj.Action.GET_INQUIRY_STATUS,new Inquiry(y));
+                ro=new RequestObj(RequestObj.Action.GET_INQUIRY_STATUS,y);
             }
             case 4 -> {
                 Scanner sc = new Scanner(System.in);
