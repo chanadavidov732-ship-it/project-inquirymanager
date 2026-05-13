@@ -115,4 +115,29 @@ public class HandleFiles {
     }
 
 
-}
+    public List<Inquiry> readHistoryInquiries() {
+        List<Inquiry> historyInquiries = new ArrayList<>();
+        File historyFolder = new File("History");
+
+        if (historyFolder.exists() && historyFolder.isDirectory()) {
+            scanFolderForInquiries(historyFolder, historyInquiries);
+        }
+
+        return historyInquiries;
+    }
+
+    private void scanFolderForInquiries(File folder, List<Inquiry> list) {
+        File[] files = folder.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                scanFolderForInquiries(file, list);
+            } else {
+                Inquiry inq = loadInquiryFromFile(file);
+                if (inq != null) {
+                    list.add(inq);
+                }
+            }
+        }
+    }}

@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.HandleFilesReflection;
@@ -190,18 +191,20 @@ public class InquiryManager {
         return handleFiles.readAllInquiries();
     }
 
-    public long getInquiryCountByMonth(int month, int year) {
+    public long getTotalInquiryCountByMonth(int month, int year) {
         HandleFiles handleFiles = new HandleFiles();
-        List<Inquiry> allInquiries = handleFiles.readAllInquiries();
 
-        return allInquiries.stream()
-                .filter(inq -> {
-                    if (inq == null || inq.getCreationDate() == null) {
-                        return false;
-                    }
-                    return inq.getCreationDate().getMonthValue() == month &&
-                            inq.getCreationDate().getYear() == year;
-                })
+        List<Inquiry> currentInquiries = handleFiles.readAllInquiries();
+        List<Inquiry> historyInquiries = handleFiles.readHistoryInquiries();
+
+        return Stream.concat(currentInquiries.stream(), historyInquiries.stream())
+                .filter(inq -> isValidInquiry(inq, month, year))
                 .count();
     }
-}
+
+    private boolean isValidInquiry(Inquiry inq, int month, int year) {
+        return inq != null &&
+                inq.getCreationDate() != null &&
+                inq.getCreationDate().getMonthValue() == month &&
+                inq.getCreationDate().getYear() == year;
+    }}
