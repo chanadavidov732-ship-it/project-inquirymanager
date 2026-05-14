@@ -28,9 +28,9 @@ public class InquiryManagerClient {
         ResponseObj responseObj;
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - exit");
+        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 -cancel inquiry\n6 - exit");
         x = scanner.nextInt();
-        while(x!=4) {
+        while(x!=5) {
             ro=execut(x);
             objectOutputStream.writeObject(ro);
             objectOutputStream.flush();
@@ -64,6 +64,12 @@ public class InquiryManagerClient {
 
                 Inquiry info = new Inquiry();
                 ro = new RequestObj(RequestObj.Action.GET_COUNT_BY_MONTH, info);
+            }
+            case 5-> {
+                System.out.println("Enter Inquiry Code to cancel:");
+                int code = scanner.nextInt();
+                ro = new RequestObj(RequestObj.Action.CANCEL_INQUIRY, code);
+
             }
         }
         return ro;
