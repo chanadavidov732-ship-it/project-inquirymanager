@@ -48,7 +48,11 @@ public class ServerService {
                     int year = Integer.parseInt(params.getDescription());
                     long count = manager.getTotalInquiryCountByMonth(month, year);
                     return new ResponseObj(200, "SUCCESS", count);
-                default:
+
+                case CANCEL_INQUIRY:
+                    int id = (int) request.getParams();
+                    return manager.cancelInquiry(id);
+                    default:
                     return new ResponseObj(400, "FAILED", "Action not supported");
             }
         }

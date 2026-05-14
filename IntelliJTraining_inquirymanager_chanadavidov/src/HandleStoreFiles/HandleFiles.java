@@ -61,6 +61,13 @@ public class HandleFiles {
             saveFile(i);
         System.out.println("saveFiles");
     }
+    public void deleteInquiryFile(IForSaving item) {
+        File file = new File(item.getFolderName(), item.getFileName() + ".txt");
+        if (file.exists()) {
+            file.delete();
+            System.out.println("File deleted: " + file.getName());
+        }
+    }
 
 //    public synchronized int getNextIdAndIncrement() {
 //        int currentId = 1;
