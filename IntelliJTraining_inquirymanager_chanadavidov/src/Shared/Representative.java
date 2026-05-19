@@ -49,22 +49,45 @@ public class Representative  implements IForSaving, Serializable {
 
     @Override
     public String getFolderName() {
-        return "";
+        return "Representatives";
     }
 
     @Override
     public String getFileName() {
-        return "";
+        return String.valueOf(this.id);
     }
 
     @Override
     public String getData() {
-        return "";
-    }
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.code).append(",")
+                .append(this.name).append(",")
+                .append(this.id);
 
+        if (this.handledInquiriesIds != null && !this.handledInquiriesIds.isEmpty()) {
+            for (Integer inquiryId : this.handledInquiriesIds) {
+                sb.append(",").append(inquiryId);
+            }
+        }
+        return sb.toString();
+    }
     @Override
     public void parseFromFile(List<String> values) {
+        if (values == null || values.size() < 4) return;
 
+        this.code = Integer.parseInt(values.get(1));
+        this.name = values.get(2);
+        this.id = Integer.parseInt(values.get(3));
+
+        if (this.handledInquiriesIds == null) {
+            this.handledInquiriesIds = new ArrayList<>();
+        } else {
+            this.handledInquiriesIds.clear();
+        }
+
+        for (int i = 4; i < values.size(); i++) {
+            this.handledInquiriesIds.add(Integer.parseInt(values.get(i)));
+        }
     }
     public List<Integer> getHandledInquiriesIds() {
         return handledInquiriesIds;
