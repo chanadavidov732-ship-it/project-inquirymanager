@@ -3,7 +3,9 @@ package Shared;
 import HandleStoreFiles.IForSaving;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class Representative  implements IForSaving, Serializable {
     static int RepresentativeCode = 0;
@@ -12,8 +14,9 @@ public class Representative  implements IForSaving, Serializable {
     private String name;
     private int id;
 
-
+    private List<Integer> handledInquiriesIds;
     public Representative() {
+        this.handledInquiriesIds = new ArrayList<>();
         code = Representative.RepresentativeCode++;
     }
 
@@ -21,6 +24,7 @@ public class Representative  implements IForSaving, Serializable {
         code = Representative.RepresentativeCode++;
         this.name = name;
         this.id = id;
+        this.handledInquiriesIds = new ArrayList<>();
     }
 
     public void setName(String name) {
@@ -61,5 +65,19 @@ public class Representative  implements IForSaving, Serializable {
     @Override
     public void parseFromFile(List<String> values) {
 
+    }
+    public List<Integer> getHandledInquiriesIds() {
+        return handledInquiriesIds;
+    }
+
+    public void setHandledInquiriesIds(List<Integer> handledInquiriesIds) {
+        this.handledInquiriesIds = handledInquiriesIds;
+    }
+
+    public void addHandledInquiryId(int inquiryId) {
+        if (this.handledInquiriesIds == null) {
+            this.handledInquiriesIds = new ArrayList<>();
+        }
+        this.handledInquiriesIds.add(inquiryId);
     }
 }
