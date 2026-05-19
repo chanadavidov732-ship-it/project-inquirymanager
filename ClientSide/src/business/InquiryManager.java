@@ -10,43 +10,39 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.HandleFilesReflection;
 
 public class InquiryManager {
 
-    final static Queue<Inquiry> QInquiry;
-    final static LinkedList<Representative> QRepresentative;
+    static java.util.Queue<Inquiry> QInquiry = new java.util.concurrent.ConcurrentLinkedQueue<>();
+
+    static LinkedList<Representative> QRepresentative = new LinkedList<>();
 
     static {
-        QInquiry = new LinkedList<>();
         try {
             before();
-
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);}
-
-        QRepresentative = new LinkedList<>();
-        try {
-            beforeRepresentative();
-
-        } catch (ClassNotFoundException |
-                 InvocationTargetException |
-                 NoSuchMethodException |
-                 InstantiationException |
-                 IllegalAccessException |
-                 IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("שגיאה בטעינת פניות: " + e.getMessage());
         }
+
+        try {
+            List<Representative> loadedReps = loadRepresentativesReflection();
+            if (loadedReps != null) {
+                QRepresentative.addAll(loadedReps);
+            }
+        } catch (Exception e) {
+            System.err.println("שגיאה בטעינת נציגים באמצעות רפלקשן: " + e.getMessage());
+        }
+
         try {
             beforeNextVal();
-
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            System.err.println("קובץ nextVal לא נמצא: " + e.getMessage());
         }
     }
-
     public void defineRepresentative() throws IOException, IllegalAccessException {
         Scanner scanner = new Scanner(System.in);
         int x = 1, id;
@@ -80,21 +76,21 @@ public class InquiryManager {
         scanner.close();
     }
 
-    public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        HandleFilesReflection hfr = new HandleFilesReflection();
-        File folder = new File("Representative");
-        if (folder.exists()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    String fileName = file.getName().replace(".txt", "");
-                    System.out.println(fileName);
-                    QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
-                    //hfr.deleteCsv("Representative/" + fileName);
-                }
-            }
-        }
-    }
+//    public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+//        HandleFilesReflection hfr = new HandleFilesReflection();
+//        File folder = new File("Representative");
+//        if (folder.exists()) {
+//            File[] files = folder.listFiles();
+//            if (files != null) {
+//                for (File file : files) {
+//                    String fileName = file.getName().replace(".txt", "");
+//                    System.out.println(fileName);
+//                    QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
+//                    //hfr.deleteCsv("Representative/" + fileName);
+//                }
+//            }
+//        }
+//    }
 
     public static void before() throws FileNotFoundException {
         String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};
@@ -195,4 +191,44 @@ public class InquiryManager {
         HandleFiles handleFiles = new HandleFiles();
         return handleFiles.readAllInquiries();
     }
+
+    public static Representative findRepresentativeById(int id) {
+        for (Representative rep : QRepresentative) {
+            if (rep.getId() == id) {
+                return rep;
+            }
+        }
+        return null;
+    }
+
+
+    public static ResponseObj deleteRepresentative(int id) {
+        Representative toDelete = null;
+
+        for (Representative rep : QRepresentative) {
+            if (rep.getId() == id) {
+                toDelete = rep;
+                break;
+            }
+        }
+
+        if (toDelete != null) {
+            QRepresentative.remove(toDelete);
+
+            File file = new File("Representative/" + toDelete.getCode() + ".txt");
+            if (file.exists()) {
+                boolean deleted = file.delete();
+                if (deleted) {
+                    return new ResponseObj(200, "Representative deleted successfully from server", true);
+                } else {
+                    return new ResponseObj(500, "Failed to delete representative file from disk", false);
+                }
+            }
+            return new ResponseObj(200, "Representative removed from memory, but file was not found", true);
+        }
+
+        return new ResponseObj(404, "Representative not found", false);
+    }
+
+
 }
