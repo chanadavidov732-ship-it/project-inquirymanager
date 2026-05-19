@@ -131,7 +131,6 @@ public class InquiryManager {
         }
     }
 
-    @Deprecated
     public void inquiryCreation() throws IOException, IllegalAccessException {
         HandleFiles im = new HandleFiles();
         Scanner scanner = new Scanner(System.in);
