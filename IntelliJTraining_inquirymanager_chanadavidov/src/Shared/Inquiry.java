@@ -76,7 +76,6 @@ public abstract class Inquiry implements IForSaving, Serializable {
         if(!folder.exists())
             folder.mkdir();
         return folder.getName();
-        return getClass().getName();
     }
 
     public abstract void handling() ;
