@@ -6,10 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Stream;
 
 import HandleStoreFiles.HandleFiles;
@@ -17,37 +15,73 @@ import HandleStoreFiles.HandleFilesReflection;
 
 public class InquiryManager {
 
-    final static Queue<Inquiry> QInquiry;
-    final static LinkedList<Representative> QRepresentative;
+    final static Queue<Inquiry> QInquiry = new ConcurrentLinkedQueue<>();
+    final static LinkedList<Representative> QRepresentative = new LinkedList<>();
 
     static {
-        QInquiry = new LinkedList<>();
         try {
             before();
-
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);}
-
-        QRepresentative = new LinkedList<>();
-        try {
-            beforeRepresentative();
-
-        } catch (ClassNotFoundException |
-                 InvocationTargetException |
-                 NoSuchMethodException |
-                 InstantiationException |
-                 IllegalAccessException |
-                 IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("שגיאה בטעינת פניות: " + e.getMessage(), e);
         }
+
+        try {
+            QRepresentative.addAll(loadRepresentativesReflection());        }
+        catch (Exception e) {
+            throw new RuntimeException("שגיאה בטעינת נציגים באמצעות רפלקשן: " + e.getMessage(), e);
+        }
+
         try {
             beforeNextVal();
-
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("קובץ nextVal לא נמצא: " + e.getMessage(), e);
         }
     }
+    public Representative findRepresentativeById(int id) {
+        for (Representative rep : QRepresentative) {
+            if (rep.getId() == id) {
+                return rep;
+            }
+        }
 
+        File file = new File("Representative/" + id + ".txt");
+        if (file.exists() && file.isFile()) {
+            try {
+                HandleFilesReflection hfr = new HandleFilesReflection();
+                Object obj = hfr.readCsv(file.getPath());
+
+                if (obj instanceof Representative) {
+                    Representative rep = (Representative) obj;
+                    QRepresentative.add(rep);
+                    return rep;
+                }
+            } catch (Exception e) {
+                System.err.println("שגיאה בקריאת נציג באמצעות רפלקשן: " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+
+    public boolean deleteRepresentative(int id) {
+        Representative toRemove = null;
+        for (Representative rep : QRepresentative) {
+            if (rep.getId() == id) {
+                toRemove = rep;
+                break;
+            }
+        }
+        if (toRemove != null) {
+            QRepresentative.remove(toRemove);
+        }
+
+        File file = new File("Representative/" + id + ".txt");
+        if (file.exists()) {
+            return file.delete();
+        }
+
+        return toRemove != null;
+    }
     public void defineRepresentative() throws IOException, IllegalAccessException {
         Scanner scanner = new Scanner(System.in);
         int x = 1, id;
@@ -58,6 +92,7 @@ public class InquiryManager {
             v = scanner.next();
             System.out.println("enter id");
             id = scanner.nextInt();
+
             QRepresentative.add(new Representative(v, id));
 
             HandleFilesReflection hfr = new HandleFilesReflection();
@@ -81,21 +116,21 @@ public class InquiryManager {
         scanner.close();
     }
 
-    public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        HandleFilesReflection hfr = new HandleFilesReflection();
-        File folder = new File("Representative");
-        if (folder.exists()) {
-            File[] files = folder.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    String fileName = file.getName().replace(".txt", "");
-                    System.out.println(fileName);
-                    QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
-                    //hfr.deleteCsv("Representative/" + fileName);
-                }
-            }
-        }
-    }
+//    public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+//        HandleFilesReflection hfr = new HandleFilesReflection();
+//        File folder = new File("Representative");
+//        if (folder.exists()) {
+//            File[] files = folder.listFiles();
+//            if (files != null) {
+//                for (File file : files) {
+//                    String fileName = file.getName().replace(".txt", "");
+//                    System.out.println(fileName);
+//                    QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
+//                    //hfr.deleteCsv("Representative/" + fileName);
+//                }
+//            }
+//        }
+//    }
 
     public static void before() throws FileNotFoundException {
         String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};
@@ -250,6 +285,39 @@ public class InquiryManager {
         // אם לא נמצאה פנייה עם קוד כזה
         return new ResponseObj(404, "Inquiry not found", false);
     }
+
+    public static List<Representative> loadRepresentativesReflection() {
+        List<Representative> representatives = new ArrayList<>();
+
+        try {
+            String className = "Shared.Representative";
+            Class<?> clazz = Class.forName(className);
+
+            File repoFolder = new File("Representative");
+            if (!repoFolder.exists() || !repoFolder.isDirectory()) {
+                return representatives;
+            }
+
+            File[] files = repoFolder.listFiles();
+            if (files == null) return representatives;
+
+            HandleFilesReflection hfr = new HandleFilesReflection();
+
+            for (File file : files) {
+                if (file.isFile()) {
+                    Object obj = hfr.readCsv(file.getPath());
+                    if (clazz.isInstance(obj)) {
+                        representatives.add((Representative) obj);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading representatives via Reflection: " + e.getMessage());
+        }
+
+        return representatives;
+    }
+
 
 }
 
