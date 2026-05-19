@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.HandleFilesReflection;
@@ -90,7 +91,7 @@ public class InquiryManager {
                     String fileName = file.getName().replace(".txt", "");
                     System.out.println(fileName);
                     QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
-                    hfr.deleteCsv("Representative/" + fileName);
+                    //hfr.deleteCsv("Representative/" + fileName);
                 }
             }
         }
@@ -146,7 +147,7 @@ public class InquiryManager {
         saveNextValFile();
     }
 
-    public void saveNextValFile() throws IOException, IllegalAccessException {
+    public static void saveNextValFile() throws IOException, IllegalAccessException {
         File dataFile = new File( "nextVal.txt");
         if (dataFile.getParentFile() != null) {
             dataFile.getParentFile().mkdirs();
@@ -160,16 +161,19 @@ public class InquiryManager {
     }
 
     public void processInquiryManager() {
-        while (this.QInquiry.peek() != null) {
-            this.QInquiry.poll().handling();
+        while (!QInquiry.isEmpty()) {
+            Thread t = new Thread(() -> {
+                QInquiry.poll().handling();
+            });
+            t.start();
             try {
-                Thread.currentThread().sleep(3 * 1000);
+                Thread.sleep(3 * 1000);
+                t.join();
             } catch (InterruptedException e) {
                 System.out.println(e.toString());
             }
         }
     }
-
 
     public static Queue<Inquiry> getQInquiry(){
         return QInquiry;
@@ -186,9 +190,29 @@ public class InquiryManager {
         QInquiry.add(inquiry);
     }
 
-    public List<Inquiry> getAllInquiriesForClient() {
+    public List<Inquiry> getAllInquiriesForClient() throws FileNotFoundException {
         HandleFiles handleFiles = new HandleFiles();
         return handleFiles.readAllInquiries();
     }
 
-}
+    public long getTotalInquiryCountByMonth(int month, int year) {
+        HandleFiles handleFiles = new HandleFiles();
+        try {
+            List<Inquiry> currentInquiries = handleFiles.readAllInquiries();
+            List<Inquiry> historyInquiries = handleFiles.readHistoryInquiries();
+
+            return Stream.concat(currentInquiries.stream(), historyInquiries.stream())
+                    .filter(inq -> isValidInquiry(inq, month, year))
+                    .count();
+        } catch (FileNotFoundException e) {
+            System.err.println("Error: One of the files was not found.");
+            return 0;
+        }
+    }
+
+    private boolean isValidInquiry(Inquiry inq, int month, int year) {
+        return inq != null &&
+                inq.getCreationDate() != null &&
+                inq.getCreationDate().getMonthValue() == month &&
+                inq.getCreationDate().getYear() == year;
+    }}

@@ -1,5 +1,6 @@
 package Server;
 
+import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.HandleFilesReflection;
 import Shared.*;
 import business.InquiryManager;
@@ -18,12 +19,16 @@ public class ServerService {
 
     public ResponseObj handleRequest(RequestObj request) {
         try {
+            if (request == null) {
+                return new ResponseObj(400, "FAILED", "NULL REQUEST");
+            }
             switch (request.getAction()) {
                 case ADD_INQUIRY:
                     Inquiry inquiry = (Inquiry) request.getParams();
-
-                    // שימוש בפונקציה החדשה שיצרנו
-//                    manager.addInquiryFromClient(inquiry);
+                    HandleFiles im = new HandleFiles();
+                    InquiryManager.getQInquiry().add(inquiry);
+                    im.saveFile(inquiry);
+                    InquiryManager.saveNextValFile();
                     return new ResponseObj(200, "SUCCESS", inquiry.getCode());
 
                 case GET_ALL:
@@ -34,9 +39,15 @@ public class ServerService {
                     Inquiry inquiry2 = (Inquiry) request.getParams();
                     return new ResponseObj(200, "SUCCESS",getStatusForClient(inquiry2.getCode()));
 
-                case TEST:
-                    return new ResponseObj(200, "SUCCESS", "SERVER_READY");
+//                case TEST:
+//                    return new ResponseObj(200, "SUCCESS", "SERVER_READY");
 
+                case GET_COUNT_BY_MONTH:
+                    Inquiry params = (Inquiry) request.getParams();
+                    int month = params.getCode();
+                    int year = Integer.parseInt(params.getDescription());
+                    long count = manager.getTotalInquiryCountByMonth(month, year);
+                    return new ResponseObj(200, "SUCCESS", count);
                 default:
                     return new ResponseObj(400, "FAILED", "Action not supported");
             }
@@ -45,11 +56,13 @@ public class ServerService {
             return new ResponseObj(500, "FAILED", e.getMessage());
         }
     }
+
     public String getStatusForClient(int status){
         Queue<Inquiry> qInquiry= InquiryManager.getQInquiry();
         for(Inquiry n:qInquiry) {
             if (n.getCode() == status)
-                return "OPEN";
+                //לדאוג אכן בכל טיפול בפניה לעדכן למשל this.status = Status.OPEN;
+                return n.getStatus().toString();
         }
         return getStatusHistory(status);
     }
@@ -58,7 +71,8 @@ public class ServerService {
         HandleFilesReflection hfr=new HandleFilesReflection();
         Inquiry o= null;
         try {
-            o = (Inquiry) hfr.readCsv("DATA.HISTORY"+Integer.toString(status));
+            o = (Inquiry) hfr.readCsv(
+                    "DATA.HISTORY/" + status);
         } catch (FileNotFoundException e){
            return "inquiry code:"+status+" not found";}
         catch (ClassNotFoundException e) {

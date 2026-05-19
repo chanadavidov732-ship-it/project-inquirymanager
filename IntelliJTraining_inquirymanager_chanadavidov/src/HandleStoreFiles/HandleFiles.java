@@ -1,6 +1,9 @@
 package HandleStoreFiles;
 
+import Shared.Complaint;
 import Shared.Inquiry;
+import Shared.Question;
+import Shared.Request;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -32,11 +35,8 @@ public class HandleFiles {
             folder.mkdirs();
         File dataFile = new File(folder, iForSaving.getFileName() + ".txt");
         FileWriter writer = new FileWriter(dataFile, false);
-//        writer.write("inquiry type: "+ iForSaving.getFolderName()+
-//                ", number inquiry: "+ iForSaving.getFileName()+
-//                ", description: "+ iForSaving.getData());
+        //writer.write(iForSaving.getData());
         writer.write(iForSaving.getFolderName() + "," +
-                iForSaving.getFileName() + "," +
                 iForSaving.getData());
         writer.flush();
         writer.close();
@@ -84,7 +84,7 @@ public class HandleFiles {
 //        return currentId;
 //    }
 
-    public List<Inquiry> readAllInquiries() {
+    public List<Inquiry> readAllInquiries() throws FileNotFoundException {
         List<Inquiry> allInquiries = new ArrayList<>();
         String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};
 
@@ -94,11 +94,40 @@ public class HandleFiles {
                 File[] files = folder.listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        Inquiry inq = loadInquiryFromFile(file);
-                        if (inq != null) {
-                            allInquiries.add(inq);
+                        String fileName =
+                                file.getName().replace(".txt", "");
+
+                        Inquiry inquiry;
+
+                        switch (folderPath) {
+
+                            case "Shared.Question":
+                                inquiry = new Question();
+                                break;
+
+                            case "Shared.Request":
+                                inquiry = new Request();
+                                break;
+
+                            case "Shared.Complaint":
+                                inquiry = new Complaint();
+                                break;
+
+                            default:
+                                continue;
                         }
+
+                        inquiry.setCode(Integer.parseInt(fileName));
+
+                        readFile(inquiry);
+
+                        allInquiries.add(inquiry);
                     }
+//                        Inquiry inq = loadInquiryFromFile(file);
+//                        if (inq != null) {
+//                            allInquiries.add(inq);
+//                        }
+//                    }
                 }
             }
         }
@@ -115,4 +144,29 @@ public class HandleFiles {
     }
 
 
-}
+    public List<Inquiry> readHistoryInquiries() {
+        List<Inquiry> historyInquiries = new ArrayList<>();
+        File historyFolder = new File("History");
+
+        if (historyFolder.exists() && historyFolder.isDirectory()) {
+            scanFolderForInquiries(historyFolder, historyInquiries);
+        }
+
+        return historyInquiries;
+    }
+
+    private void scanFolderForInquiries(File folder, List<Inquiry> list) {
+        File[] files = folder.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                scanFolderForInquiries(file, list);
+            } else {
+                Inquiry inq = loadInquiryFromFile(file);
+                if (inq != null) {
+                    list.add(inq);
+                }
+            }
+        }
+    }}

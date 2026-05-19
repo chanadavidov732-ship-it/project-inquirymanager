@@ -23,11 +23,12 @@ public class InquiryManagerClient {
         RequestObj ro;
         int x;
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(connectToServer.getOutputStream());
+        objectOutputStream.flush();
         ObjectInputStream in = new ObjectInputStream(connectToServer.getInputStream());
         ResponseObj responseObj;
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - exit");
+        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - exit");
         x = scanner.nextInt();
         while(x!=4) {
             ro=execut(x);
@@ -35,10 +36,11 @@ public class InquiryManagerClient {
             objectOutputStream.flush();
 
             printServerAnswer((ResponseObj)in.readObject()) ;
-            System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - exit");
+            System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - exit");
             x = scanner.nextInt();
         }
         connectToServer.close();
+
     }
 
     public RequestObj execut(int x)  {
@@ -46,12 +48,22 @@ public class InquiryManagerClient {
         Scanner scanner = new Scanner(System.in);
         int y;
         switch (x) {
-            case 1 -> ro=new RequestObj(RequestObj.Action.GET_ALL,new Inquiry());
+            case 1 -> ro=new RequestObj(RequestObj.Action.GET_ALL, null);
             case 2 -> ro=new RequestObj(RequestObj.Action.ADD_INQUIRY,createNewInquiry());
             case 3 -> {
                 System.out.println("enter inquiry code");
                 y=  scanner.nextInt();
-                ro=new RequestObj(RequestObj.Action.GET_INQUIRY_STATUS,new Inquiry(y));
+                ro=new RequestObj(RequestObj.Action.GET_INQUIRY_STATUS,y);
+            }
+            case 4 -> {
+                Scanner sc = new Scanner(System.in);
+                System.out.println("Enter month (1-12):");
+                int m = sc.nextInt();
+                System.out.println("Enter year (e.g. 2024):");
+                y = sc.nextInt();
+
+                Inquiry info = new Inquiry();
+                ro = new RequestObj(RequestObj.Action.GET_COUNT_BY_MONTH, info);
             }
         }
         return ro;

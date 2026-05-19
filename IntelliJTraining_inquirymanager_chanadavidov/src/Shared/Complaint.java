@@ -1,14 +1,10 @@
 package Shared;
 
-import HandleStoreFiles.IForSaving;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class Complaint extends Inquiry  implements IForSaving, Serializable {
-    private Integer code;
-    private String description;
-    private LocalDateTime creationDate;
+public class Complaint extends Inquiry  {
+
     private String assignedBranch;
 
     public Complaint(){}
@@ -17,18 +13,20 @@ public class Complaint extends Inquiry  implements IForSaving, Serializable {
         this.creationDate=LocalDateTime.now();
         this.assignedBranch = assignedBranch;
         this.description = description;
+        this.status = Status.OPEN;
     }
     public Complaint(Integer code,String description,String assignedBranch) {
         this.code=code;
         this.description=description;
         this.assignedBranch = assignedBranch;
-        //this.creationDate=creationDate;
+        this.creationDate=LocalDateTime.now();
+        this.status = Status.OPEN;
     }
 
-    public void fillDataByUser(Integer code, String description, String assignedBranch){
+    public void fillDataByUser(Integer code, String description, String assignedBranch,LocalDateTime creationDate){
         this.code=code;
         this.description=description;
-        //this.creationDate= creationDate;
+        this.creationDate= creationDate;
         this.assignedBranch=assignedBranch;
     }
 
@@ -44,31 +42,7 @@ public class Complaint extends Inquiry  implements IForSaving, Serializable {
 
     @Override
     public String getData() {
-        return "description: "+description+", creationDate: "+creationDate+", assignedBranch: "+assignedBranch;
-    }
-
-    public String getAssignedBranch() {
-        return assignedBranch;
-    }
-
-    public void setAssignedBranch(String assignedBranch) {
-        this.assignedBranch = assignedBranch;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+        return this.code+","+this.description+","+this.creationDate.toString()+","+this.assignedBranch;
     }
 
     @Override
@@ -78,5 +52,14 @@ public class Complaint extends Inquiry  implements IForSaving, Serializable {
 
     public void setCode(Integer code) {
         this.code = code;
+    }
+
+    public void parseFromFile(List<String> values) {
+        String folderN=values.get(0);
+        (this).fillDataByUser(Integer.parseInt(values.get(1))
+                , values.get(2)
+                , values.get(3)
+                , LocalDateTime.parse(values.get(3))
+        );
     }
 }
