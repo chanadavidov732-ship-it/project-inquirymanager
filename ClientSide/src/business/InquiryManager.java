@@ -28,14 +28,14 @@ public class InquiryManager {
             System.err.println("שגיאה בטעינת פניות: " + e.getMessage());
         }
 
-        try {
-            List<Representative> loadedReps = loadRepresentativesReflection();
-            if (loadedReps != null) {
-                QRepresentative.addAll(loadedReps);
-            }
-        } catch (Exception e) {
-            System.err.println("שגיאה בטעינת נציגים באמצעות רפלקשן: " + e.getMessage());
-        }
+//        try {
+//            List<Representative> loadedReps = loadRepresentativesReflection();
+//            if (loadedReps != null) {
+//                QRepresentative.addAll(loadedReps);
+//            }
+//        } catch (Exception e) {
+//            System.err.println("שגיאה בטעינת נציגים באמצעות רפלקשן: " + e.getMessage());
+//        }
 
         try {
             beforeNextVal();
@@ -76,21 +76,21 @@ public class InquiryManager {
         scanner.close();
     }
 
-//    public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-//        HandleFilesReflection hfr = new HandleFilesReflection();
-//        File folder = new File("Representative");
-//        if (folder.exists()) {
-//            File[] files = folder.listFiles();
-//            if (files != null) {
-//                for (File file : files) {
-//                    String fileName = file.getName().replace(".txt", "");
-//                    System.out.println(fileName);
-//                    QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
-//                    //hfr.deleteCsv("Representative/" + fileName);
-//                }
-//            }
-//        }
-//    }
+    public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        HandleFilesReflection hfr = new HandleFilesReflection();
+        File folder = new File("Representative");
+        if (folder.exists()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    String fileName = file.getName().replace(".txt", "");
+                    System.out.println(fileName);
+                    QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
+                    //hfr.deleteCsv("Representative/" + fileName);
+                }
+            }
+        }
+    }
 
     public static void before() throws FileNotFoundException {
         String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};

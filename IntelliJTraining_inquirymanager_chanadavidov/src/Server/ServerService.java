@@ -36,8 +36,8 @@ public class ServerService {
                     return new ResponseObj(200, "SUCCESS", all);
 
                 case GET_INQUIRY_STATUS:
-                    Inquiry inquiry2 = (Inquiry) request.getParams();
-                    return new ResponseObj(200, "SUCCESS",getStatusForClient(inquiry2.getCode()));
+                    int code = (int) request.getParams();
+                    return new ResponseObj(200, "SUCCESS",getStatusForClient(code));
 
 //                case TEST:
 //                    return new ResponseObj(200, "SUCCESS", "SERVER_READY");
