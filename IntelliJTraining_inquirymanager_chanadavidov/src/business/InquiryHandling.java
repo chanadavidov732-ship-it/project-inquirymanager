@@ -29,7 +29,7 @@ public class InquiryHandling extends Thread {
     public void run() {
         if(currentInquiry instanceof Question)
             Thread.currentThread().setPriority(10);
-        this.currentInquiry.handling();
+        currentInquiry.handling();
         try {
             if(currentInquiry instanceof Request )
                 sleep(3*1000);

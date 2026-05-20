@@ -41,6 +41,6 @@ public class InquiryHandlingTask implements Runnable{
         }
         inquiryToTreat.setStatus(Inquiry.Status.TREATED);
         inquiryToTreat.transferToHistory();
-        //הוספת סוכן לתור הסוכנים הפנויים
+        InquiryManager.QRepresentative.add(treatingRepresentative);
     }
 }
