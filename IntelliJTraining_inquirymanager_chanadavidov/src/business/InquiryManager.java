@@ -18,8 +18,7 @@ public class InquiryManager {
     final static Queue<Inquiry> QInquiry = new LinkedList<>();
     final static Queue<Representative> QActiveRepresentative = new LinkedList<>();
     final static Queue<Representative> QRepresentative = new LinkedList<>();
-    final static Queue<InquiryHandlingTask> QInquiryMergeAgent = new LinkedList<>();
-
+    final static Queue<InquiryHandlingTask> QInquiryMergeAgent =new ConcurrentLinkedQueue<>();
 
     static {
         try {
@@ -45,38 +44,47 @@ public class InquiryManager {
     }
 
     private static void mergingInquiriesToAgent() {
-        while(true){
-            Thread thread=new Thread(()->{
+        Thread thread=new Thread(()->{
+            while(true){
                 if (!QActiveRepresentative.isEmpty() && !QInquiry.isEmpty())
                 {
                     InquiryHandlingTask iht=new InquiryHandlingTask(QActiveRepresentative.poll(),QInquiry.poll());
-                    QInquiryMergeAgent.add(iht);
+                    //option 1-
+                    //QInquiryMergeAgent.add(iht);
+                    agentsTreatInquiries(iht);
                 }
-            } );
-            thread.start();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+        } );
+        thread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
     }
 
     private static void agentsTreatInquiries(InquiryHandlingTask iht) {
         //option 1-
-        while(true){
-            Thread thread=new Thread(()->{
-                if(!QInquiryMergeAgent.isEmpty())
-                    QInquiryMergeAgent.poll().getMergeInquiry().handling();
-            });
-            thread.start();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        //option 2-iht.run();
+
+//        Thread thread=new Thread(()->{
+//            while(true) {
+//                if (!QInquiryMergeAgent.isEmpty())
+//                    QInquiryMergeAgent.poll().getMergeInquiry().handling();
+//        }});
+//
+//        thread.start();
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        //option 2-
+
+        Thread thread = new Thread(iht);
+
+        thread.start();
     }
 
     public Representative findRepresentativeById(int id) {
