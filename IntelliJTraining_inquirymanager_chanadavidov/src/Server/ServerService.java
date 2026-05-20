@@ -54,6 +54,38 @@ public class ServerService {
                     return manager.cancelInquiry(id);
                     default:
                     return new ResponseObj(400, "FAILED", "Action not supported");
+
+                case AGENT_LOGIN:
+                    // 1. שליפת אובייקט הסוכן מתוך הבקשה (העברנו אותו כ-Object, אז נמיר אותו חזרה ל-Representative)
+                    Representative loginAgent = (Representative) request.getParams();
+
+//                  לחכות לפונקציה של חנה שהיא צריכה לעשות רישום סוכן
+//                    InquiryManager.registerAgent(loginAgent);
+                    // 3. החזרת תשובת הצלחה ללקוח
+                    return new ResponseObj(200, "SUCCESS", "Agent logged in successfully");
+
+                case AGENT_LOGOUT:
+                    // כאן את יכולה לקבל או את אובייקט הסוכן השלם או רק את ה-ID שלו (לפי מה שתסכמי עם איש צוות 3)
+                    // נניח שאתם מעבירים את ה-ID (שהוא int)
+                    int logoutAgentId = (int) request.getParams();
+
+//                  לחכות לפונקציה של חנה שהיא צריכה לעשות מימוש של הסרת סוכן
+//                    InquiryManager.disconnectAgent(logoutAgentId);
+                    return new ResponseObj(200, "SUCCESS", "Agent logged out successfully");
+
+                case ADD_AGENT:
+                    Representative newAgent = (Representative) request.getParams();
+
+//                    לחכות לפונקציה של אלישבע שאמורה לשמור סוכן חדש
+//                    InquiryManager.createNewAgentInSystem(newAgent);
+                    return new ResponseObj(200, "SUCCESS", "Agent added to system successfully");
+
+                case REMOVE_AGENT:
+                    int removeAgentId = (int) request.getParams();
+//                    לחכות לפונקציה של אלישבע שאמורה למחוק סוכן
+//                   InquiryManager.deleteAgentFromSystem(removeAgentId);
+
+                    return new ResponseObj(200, "SUCCESS", "Agent removed from system successfully");
             }
         }
         catch (Exception e) {
