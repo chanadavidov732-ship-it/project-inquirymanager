@@ -56,7 +56,6 @@ public class ServerService {
                     return new ResponseObj(400, "FAILED", "Action not supported");
 
                 case AGENT_LOGIN:
-                    // 1. שליפת אובייקט הסוכן מתוך הבקשה (העברנו אותו כ-Object, אז נמיר אותו חזרה ל-Representative)
                     Representative loginAgent = (Representative) request.getParams();
 
 //                  לחכות לפונקציה של חנה שהיא צריכה לעשות רישום סוכן
@@ -65,8 +64,7 @@ public class ServerService {
                     return new ResponseObj(200, "SUCCESS", "Agent logged in successfully");
 
                 case AGENT_LOGOUT:
-                    // כאן את יכולה לקבל או את אובייקט הסוכן השלם או רק את ה-ID שלו (לפי מה שתסכמי עם איש צוות 3)
-                    // נניח שאתם מעבירים את ה-ID (שהוא int)
+
                     int logoutAgentId = (int) request.getParams();
 
 //                  לחכות לפונקציה של חנה שהיא צריכה לעשות מימוש של הסרת סוכן
