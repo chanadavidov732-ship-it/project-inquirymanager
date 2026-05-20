@@ -31,8 +31,8 @@ public abstract class Inquiry implements IForSaving, Serializable {
     public Status getStatus(){return status;}
     public void setStatus(Status newStatus){
         this.status = newStatus;
-        if(this.status == Status.CANCELED || this.status == Status.TREATED)
-            transferToHistory();
+//        if(this.status == Status.CANCELED || this.status == Status.TREATED)
+//            transferToHistory();
     }
     public void transferToHistory(){
         HandleFiles handleFiles = new HandleFiles();
@@ -76,7 +76,6 @@ public abstract class Inquiry implements IForSaving, Serializable {
         if(!folder.exists())
             folder.mkdir();
         return folder.getName();
-        return getClass().getName();
     }
 
     public abstract void handling() ;
