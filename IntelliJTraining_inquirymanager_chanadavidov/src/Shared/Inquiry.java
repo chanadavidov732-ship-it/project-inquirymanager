@@ -31,8 +31,8 @@ public abstract class Inquiry implements IForSaving, Serializable {
     public Status getStatus(){return status;}
     public void setStatus(Status newStatus){
         this.status = newStatus;
-        if(this.status == Status.CANCELED || this.status == Status.TREATED)
-            transferToHistory();
+//        if(this.status == Status.CANCELED || this.status == Status.TREATED)
+//            transferToHistory();
     }
     public void transferToHistory(){
         HandleFiles handleFiles = new HandleFiles();

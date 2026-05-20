@@ -5,6 +5,11 @@ import java.util.Scanner;
 
 public class InquiryHandling extends Thread {
     private Inquiry currentInquiry;
+
+    public InquiryHandling(Inquiry currentInquiry) {
+        this.currentInquiry = currentInquiry;
+    }
+
     @Deprecated//יש להשתמש ב InquiryManager.inquiryCreation()
     public void createInquiry(){
         Scanner scanner = new Scanner(System.in);
@@ -24,12 +29,12 @@ public class InquiryHandling extends Thread {
     public void run() {
         if(currentInquiry instanceof Question)
             Thread.currentThread().setPriority(10);
-        this.currentInquiry.handling();
+        currentInquiry.handling();
         try {
             if(currentInquiry instanceof Request )
-                Thread.currentThread().sleep(3*1000);
+                sleep(3*1000);
             else
-                Thread.currentThread().sleep(5*1000);
+                sleep(5*1000);
         } catch (InterruptedException e) {
             System.out.println(e.toString());
         }
