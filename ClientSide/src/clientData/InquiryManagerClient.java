@@ -30,7 +30,7 @@ public class InquiryManagerClient {
         Scanner scanner = new Scanner(System.in);
         System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 -cancel inquiry\n6 - exit");
         x = scanner.nextInt();
-        while(x!=5) {
+        while(x!=10) {
             ro=execut(x);
             objectOutputStream.writeObject(ro);
             objectOutputStream.flush();
@@ -71,6 +71,36 @@ public class InquiryManagerClient {
                 ro = new RequestObj(RequestObj.Action.CANCEL_INQUIRY, code);
 
             }
+            case 6 -> {
+                System.out.println("Enter Agent Name:");
+                String loginName = scanner.nextLine();
+                System.out.println("Enter Agent ID:");
+                int loginId = scanner.nextInt();
+
+                Representative agentToLogin = new Representative(loginName, loginId);
+                ro = new RequestObj(RequestObj.Action.AGENT_LOGIN, (Inquiry)(Object)agentToLogin);
+            }
+            case 7 -> {
+                System.out.println("Enter Agent ID to Logout:");
+                int logoutId = scanner.nextInt();
+
+                ro = new RequestObj(RequestObj.Action.AGENT_LOGOUT, (Inquiry)(Object)logoutId);
+            }
+            case 8 -> {
+                System.out.println("Enter New Agent Name to register:");
+                String newAgentName = scanner.nextLine();
+                System.out.println("Enter New Agent ID:");
+                int newAgentId = scanner.nextInt();
+
+                Representative agentToAdd = new Representative(newAgentName, newAgentId);
+                ro = new RequestObj(RequestObj.Action.ADD_AGENT, (Inquiry)(Object)agentToAdd);
+            }
+            case 9 -> {
+                System.out.println("Enter Agent ID to remove from system:");
+                int removeId = scanner.nextInt();
+
+                ro = new RequestObj(RequestObj.Action.REMOVE_AGENT, (Inquiry)(Object)removeId);
+            }
         }
         return ro;
     }
@@ -79,8 +109,7 @@ public class InquiryManagerClient {
         Scanner scanner = new Scanner(System.in);
         Inquiry inquiry=null;
 
-        System.out.println("press:\n1 - create complaint inquiry\n2 - create question inquiry\n3 - create request inquiry");
-        int x = scanner.nextInt();
+        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - cancel inquiry\n6 - Agent Login\n7 - Agent Logout\n8 - Add New Agent\n9 - Remove Agent\n10 - exit");        int x = scanner.nextInt();
         scanner.nextLine();
         System.out.println("enter description");
         String d = scanner.nextLine();
