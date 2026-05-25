@@ -92,10 +92,12 @@ public class ServerService {
 
                 case REMOVE_AGENT:
                     int removeAgentId = (int) request.getParams();
-//                    לחכות לפונקציה של אלישבע שאמורה למחוק סוכן
-//                   InquiryManager.deleteAgentFromSystem(removeAgentId);
-
-                    return new ResponseObj(200, "SUCCESS", "Agent removed from system successfully");
+                    boolean isDeleted = manager.deleteRepresentative(removeAgentId);
+                    if (isDeleted) {
+                        return new ResponseObj(200, "SUCCESS", "Agent removed from system successfully");
+                    } else {
+                        return new ResponseObj(404, "FAILED", "Agent not found or could not be deleted");
+                    }
             }
         }
         catch (Exception e) {
