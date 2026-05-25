@@ -298,6 +298,31 @@ public class InquiryManager {
         }
     }
 
+    public int getInquiryCountByMonth(int month) {
+        int count = 0;
+
+        for (Inquiry inquiry : QInquiry) {
+            if (inquiry.getCreationDate() != null && inquiry.getCreationDate().getMonthValue() == month) {
+                count++;
+            }
+        }
+        try {
+            HandleFiles handleFiles = new HandleFiles();
+            List<Inquiry> historyInquiries = handleFiles.readHistoryInquiries();
+            if (historyInquiries != null) {
+                for (Inquiry inquiry : historyInquiries) {
+                    if (inquiry.getCreationDate() != null && inquiry.getCreationDate().getMonthValue() == month) {
+                        count++;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error scanning history files for monthly count: " + e.getMessage());
+        }
+
+        return count;
+    }
+
     private boolean isValidInquiry(Inquiry inq, int month, int year) {
         return inq != null &&
                 inq.getCreationDate() != null &&
