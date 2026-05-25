@@ -132,18 +132,18 @@ public class InquiryManager {
 
         return toRemove != null;
     }
-    public void defineRepresentative() throws IOException, IllegalAccessException {
-        Scanner scanner = new Scanner(System.in);
-        int x = 1, id;
-        String v;
+    public void defineRepresentative(Representative rep) throws IOException, IllegalAccessException {
+//        Scanner scanner = new Scanner(System.in);
+//        int x = 1, id;
+//        String v;
 
-        while (x == 1) {
-            System.out.println("enter a name");
-            v = scanner.next();
-            System.out.println("enter id");
-            id = scanner.nextInt();
+//        while (x == 1) {
+//            System.out.println("enter a name");
+//            v = scanner.next();
+//            System.out.println("enter id");
+//            id = scanner.nextInt();
 
-            Representative rep = new Representative(v, id);
+           // Representative rep = new Representative(v, id);
             QRepresentative.add(rep);
             HandleFilesReflection hfr = new HandleFilesReflection();
             hfr.saveCSVObject(rep, "Representative/" + String.valueOf(rep.getId()));
@@ -152,9 +152,9 @@ public class InquiryManager {
 //           hfr.saveCSVObject(QRepresentative.peek(), "Representative/"
 //                    + String.valueOf(QRepresentative.peek().getCode()));
 
-            System.out.println("to add representative press 1 to exit enter any key");
-            x = scanner.nextInt();
-        }
+//            System.out.println("to add representative press 1 to exit enter any key");
+//            x = scanner.nextInt();
+//        }
     }
 
     public static void beforeNextVal() throws FileNotFoundException {

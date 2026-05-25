@@ -78,28 +78,28 @@ public class InquiryManagerClient {
                 int loginId = scanner.nextInt();
 
                 Representative agentToLogin = new Representative(loginName, loginId);
-                ro = new RequestObj(RequestObj.Action.AGENT_LOGIN, (Inquiry)(Object)agentToLogin);
+                ro = new RequestObj(RequestObj.Action.AGENT_LOGIN, (Object)agentToLogin);
             }
             case 7 -> {
                 System.out.println("Enter Agent ID to Logout:");
                 int logoutId = scanner.nextInt();
 
-                ro = new RequestObj(RequestObj.Action.AGENT_LOGOUT, (Inquiry)(Object)logoutId);
+                ro = new RequestObj(RequestObj.Action.AGENT_LOGOUT, (Object)logoutId);
             }
             case 8 -> {
                 System.out.println("Enter New Agent Name to register:");
                 String newAgentName = scanner.nextLine();
                 System.out.println("Enter New Agent ID:");
-                int newAgentId = scanner.nextInt();
+                int newAgentId = Integer.parseInt(scanner.nextLine());
 
                 Representative agentToAdd = new Representative(newAgentName, newAgentId);
-                ro = new RequestObj(RequestObj.Action.ADD_AGENT, (Inquiry)(Object)agentToAdd);
+                ro = new RequestObj(RequestObj.Action.ADD_AGENT, (Object)agentToAdd);
             }
             case 9 -> {
                 System.out.println("Enter Agent ID to remove from system:");
                 int removeId = scanner.nextInt();
 
-                ro = new RequestObj(RequestObj.Action.REMOVE_AGENT, (Inquiry)(Object)removeId);
+                ro = new RequestObj(RequestObj.Action.REMOVE_AGENT, removeId);
             }
         }
         return ro;
