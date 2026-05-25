@@ -28,7 +28,7 @@ public class InquiryManagerClient {
         ResponseObj responseObj;
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 -cancel inquiry\n6 - exit");
+        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - cancel inquiry\n6 - Agent Login\n7 - Agent Logout\n8 - Add New Agent\n9 - Remove Agent\n10 - exit");
         x = scanner.nextInt();
         while(x!=10) {
             ro=execut(x);
@@ -36,7 +36,7 @@ public class InquiryManagerClient {
             objectOutputStream.flush();
 
             printServerAnswer((ResponseObj)in.readObject()) ;
-            System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - exit");
+            System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - cancel inquiry\n6 - Agent Login\n7 - Agent Logout\n8 - Add New Agent\n9 - Remove Agent\n10 - exit");
             x = scanner.nextInt();
         }
         connectToServer.close();
@@ -108,8 +108,8 @@ public class InquiryManagerClient {
     public Inquiry createNewInquiry(){
         Scanner scanner = new Scanner(System.in);
         Inquiry inquiry=null;
-
-        System.out.println("press:\n1 - get all inquiries\n2 - create new inquiry\n3 - get inquiry`s status\n4 - get monthly count\n5 - cancel inquiry\n6 - Agent Login\n7 - Agent Logout\n8 - Add New Agent\n9 - Remove Agent\n10 - exit");        int x = scanner.nextInt();
+        System.out.println("press:\n1 - create complaint inquiry\n2 - create question inquiry\n3 - create request inquiry");
+        int x = scanner.nextInt();
         scanner.nextLine();
         System.out.println("enter description");
         String d = scanner.nextLine();

@@ -143,11 +143,14 @@ public class InquiryManager {
             System.out.println("enter id");
             id = scanner.nextInt();
 
-            QRepresentative.add(new Representative(v, id));
-
+            Representative rep = new Representative(v, id);
+            QRepresentative.add(rep);
             HandleFilesReflection hfr = new HandleFilesReflection();
-            hfr.saveCSVObject(QRepresentative.peekLast(), "Representative/"
-                    + String.valueOf(QRepresentative.peekLast().getCode()));
+            hfr.saveCSVObject(rep, "Representative/" + String.valueOf(rep.getId()));
+            //QRepresentative.add(new Representative(v, id));
+//           HandleFilesReflection hfr = new HandleFilesReflection();
+//           hfr.saveCSVObject(QRepresentative.peek(), "Representative/"
+//                    + String.valueOf(QRepresentative.peek().getCode()));
 
             System.out.println("to add representative press 1 to exit enter any key");
             x = scanner.nextInt();
