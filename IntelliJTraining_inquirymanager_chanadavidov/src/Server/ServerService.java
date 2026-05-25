@@ -68,36 +68,24 @@ public class ServerService {
                     return new ResponseObj(400, "FAILED", "Action not supported");
 
                 case AGENT_LOGIN:
-                    Representative loginAgent = (Representative) request.getParams();
-
-//                  לחכות לפונקציה של חנה שהיא צריכה לעשות רישום סוכן
-//                    InquiryManager.registerAgent(loginAgent);
-                    // 3. החזרת תשובת הצלחה ללקוח
+                    Representative rep = (Representative) request.getParams();
                     return new ResponseObj(200, "SUCCESS", "Agent logged in successfully");
-
                 case AGENT_LOGOUT:
+                    // השרת מוציא את ה-ID ששלחת וממיר אותו ישירות למספר
+                    int idToLogout = (Integer) request.getParams();
 
-                    int logoutAgentId = (int) request.getParams();
+                    // כאן הקוד שלכן שמנתק את הסוכן, משהו כמו:
+                    // manager.agentLogout(idToLogout);
 
-//                  לחכות לפונקציה של חנה שהיא צריכה לעשות מימוש של הסרת סוכן
-//                    InquiryManager.disconnectAgent(logoutAgentId);
                     return new ResponseObj(200, "SUCCESS", "Agent logged out successfully");
-
                 case ADD_AGENT:
-                    Representative newAgent = (Representative) request.getParams();
-
-//                    לחכות לפונקציה של אלישבע שאמורה לשמור סוכן חדש
-//                    InquiryManager.createNewAgentInSystem(newAgent);
-                    return new ResponseObj(200, "SUCCESS", "Agent added to system successfully");
-
+                    Representative rep1 = (Representative) request.getParams();
+                    manager.defineRepresentative(rep1.getName(), rep1.getId());
+                    return new ResponseObj(200, "SUCCESS", "Agent added successfully");
                 case REMOVE_AGENT:
-                    int removeAgentId = (int) request.getParams();
-                    boolean isDeleted = manager.deleteRepresentative(removeAgentId);
-                    if (isDeleted) {
-                        return new ResponseObj(200, "SUCCESS", "Agent removed from system successfully");
-                    } else {
-                        return new ResponseObj(404, "FAILED", "Agent not found or could not be deleted");
-                    }
+                    int idToRemove = (Integer) request.getParams();
+                    manager.deleteRepresentative(idToRemove);
+                    return new ResponseObj(200, "SUCCESS", "Agent removed successfully");
             }
         }
         catch (Exception e) {

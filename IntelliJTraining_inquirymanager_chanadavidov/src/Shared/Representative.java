@@ -8,6 +8,7 @@ import java.util.List;
 
 
 public class Representative  implements IForSaving, Serializable {
+    private static final long serialVersionUID = 1L;
     static int RepresentativeCode = 0;
 
     private int code;

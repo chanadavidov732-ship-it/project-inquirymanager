@@ -73,34 +73,40 @@ public class InquiryManagerClient {
             }
             case 6 -> {
                 System.out.println("Enter Agent Name:");
-                String loginName = scanner.nextLine();
+                String agentName = scanner.nextLine();
                 System.out.println("Enter Agent ID:");
-                int loginId = scanner.nextInt();
+                int agentId = scanner.nextInt();
+                scanner.nextLine(); // מנקה את האנטר בסורק
 
-                Representative agentToLogin = new Representative(loginName, loginId);
-                ro = new RequestObj(RequestObj.Action.AGENT_LOGIN, (Inquiry)(Object)agentToLogin);
+                Representative agentLogin = new Representative(agentName, agentId);
+
+                // שולחים את אובייקט הסוכן ישירות כמו שהוא! בלי שום המרה ל-Inquiry
+                ro = new RequestObj(RequestObj.Action.AGENT_LOGIN, agentLogin);
             }
             case 7 -> {
                 System.out.println("Enter Agent ID to Logout:");
                 int logoutId = scanner.nextInt();
+                scanner.nextLine(); // מנקה את האנטר בסורק
 
-                ro = new RequestObj(RequestObj.Action.AGENT_LOGOUT, (Inquiry)(Object)logoutId);
+                // שולחים את המספר (ID) נקי כמו שהוא! ג'אווה כבר תדע להסתדר
+                ro = new RequestObj(RequestObj.Action.AGENT_LOGOUT, logoutId);
             }
             case 8 -> {
                 System.out.println("Enter New Agent Name to register:");
                 String newAgentName = scanner.nextLine();
                 System.out.println("Enter New Agent ID:");
                 int newAgentId = scanner.nextInt();
+                scanner.nextLine(); // משחרר את ה"אנטר" התקוע בסורק כדי שלא יעשה בעיות בסיבוב הבא!
 
                 Representative agentToAdd = new Representative(newAgentName, newAgentId);
-                ro = new RequestObj(RequestObj.Action.ADD_AGENT, (Inquiry)(Object)agentToAdd);
+
+                ro = new RequestObj(RequestObj.Action.ADD_AGENT, agentToAdd);
             }
             case 9 -> {
                 System.out.println("Enter Agent ID to remove from system:");
                 int removeId = scanner.nextInt();
 
-                ro = new RequestObj(RequestObj.Action.REMOVE_AGENT, (Inquiry)(Object)removeId);
-            }
+                ro = new RequestObj(RequestObj.Action.REMOVE_AGENT, removeId);            }
         }
         return ro;
     }
