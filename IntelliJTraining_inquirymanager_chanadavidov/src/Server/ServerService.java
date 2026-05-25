@@ -68,17 +68,12 @@ public class ServerService {
 
                 case AGENT_LOGIN:
                     Representative loginAgent = (Representative) request.getParams();
-
-//                  לחכות לפונקציה של חנה שהיא צריכה לעשות רישום סוכן
-//                    InquiryManager.registerAgent(loginAgent);
+                    inquiryManager.registerAgent(loginAgent);
                     return new ResponseObj(200, "SUCCESS", "Agent logged in successfully");
 
                 case AGENT_LOGOUT:
-
                     int logoutAgentId = (int) request.getParams();
-
-//                  לחכות לפונקציה של חנה שהיא צריכה לעשות מימוש של הסרת סוכן
-//                    InquiryManager.disconnectAgent(logoutAgentId);
+                    inquiryManager.disconnectAgent(logoutAgentId);
                     return new ResponseObj(200, "SUCCESS", "Agent logged out successfully");
 
                 case ADD_AGENT:
