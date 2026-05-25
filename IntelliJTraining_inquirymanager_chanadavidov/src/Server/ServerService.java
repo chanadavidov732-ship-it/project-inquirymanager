@@ -43,11 +43,23 @@ public class ServerService {
 //                    return new ResponseObj(200, "SUCCESS", "SERVER_READY");
 
                 case GET_COUNT_BY_MONTH:
-                    Inquiry params = (Inquiry) request.getParams();
-                    int month = params.getCode();
-                    int year = Integer.parseInt(params.getDescription());
-                    long count = manager.getTotalInquiryCountByMonth(month, year);
-                    return new ResponseObj(200, "SUCCESS", count);
+                    try {
+                        if (request.getParams() == null) {
+                            return new ResponseObj(400, "FAILED", "Missing month parameter");
+                        }
+
+                        int month;
+                        if (request.getParams() instanceof Integer) {
+                            month = (Integer) request.getParams();
+                        } else {
+                            month = Integer.parseInt(request.getParams().toString().trim());
+                        }
+                        int totalCount = manager.getInquiryCountByMonth(month);
+
+                        return new ResponseObj(200, "SUCCESS", totalCount);
+                    } catch (Exception ex) {
+                        return new ResponseObj(400, "FAILED", "Invalid month parameter or system error: " + ex.getMessage());
+                    }
 
                 case CANCEL_INQUIRY:
                     int id = (int) request.getParams();
