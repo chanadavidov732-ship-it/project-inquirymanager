@@ -381,6 +381,19 @@ public class InquiryManager {
         return representatives;
     }
 
+    public void registerAgent(Representative loginAgent){
+        QActiveRepresentative.add(loginAgent);
+    }
+    public void disconnectAgent(int logoutAgentId){
+        Iterator<Representative> it = QActiveRepresentative.iterator();
 
+        while (it.hasNext()) {
+            Representative r = it.next();
+            if (r.getId() == logoutAgentId) {
+                it.remove();
+                break;
+            }
+        }
+    }
 }
 

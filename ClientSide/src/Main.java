@@ -7,11 +7,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         try{
-<<<<<<< HEAD
-            InquiryManagerClient i=new InquiryManagerClient("localhost", 8888);
-=======
-            InquiryManagerClient i=new InquiryManagerClient("Localhost", 8888);
->>>>>>> 9fe057149fd554ec3c4acb4d84bcffd193a8c6f3
+            InquiryManagerClient i=new InquiryManagerClient("10.0.0.139", 8888);
             i.startConnectClientServer();
         }
         catch (ClassNotFoundException e) {
