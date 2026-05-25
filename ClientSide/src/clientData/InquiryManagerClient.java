@@ -63,7 +63,7 @@ public class InquiryManagerClient {
                 y = sc.nextInt();
 
                 //Inquiry info = new Inquiry();
-                ro = new RequestObj(RequestObj.Action.GET_COUNT_BY_MONTH, null);
+                ro = new RequestObj(RequestObj.Action.GET_COUNT_BY_MONTH, m);
             }
             case 5-> {
                 System.out.println("Enter Inquiry Code to cancel:");

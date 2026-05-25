@@ -18,7 +18,6 @@ public class ServerService {
     }
 
     public ResponseObj handleRequest(RequestObj request) {
-        InquiryManager inquiryManager=new InquiryManager();
         try {
             if (request == null) {
                 return new ResponseObj(400, "FAILED", "NULL REQUEST");
@@ -40,8 +39,8 @@ public class ServerService {
                     int code = (int) request.getParams();
                     return new ResponseObj(200, "SUCCESS",getStatusForClient(code));
 
-                case TEST:
-                    return new ResponseObj(200, "SUCCESS", "SERVER_READY");
+//                case TEST:
+//                    return new ResponseObj(200, "SUCCESS", "SERVER_READY");
 
                 case GET_COUNT_BY_MONTH:
                     try {
@@ -65,12 +64,15 @@ public class ServerService {
                 case CANCEL_INQUIRY:
                     int id = (int) request.getParams();
                     return manager.cancelInquiry(id);
+                    default:
+                    return new ResponseObj(400, "FAILED", "Action not supported");
 
                 case AGENT_LOGIN:
                     Representative loginAgent = (Representative) request.getParams();
 
 //                  לחכות לפונקציה של חנה שהיא צריכה לעשות רישום סוכן
 //                    InquiryManager.registerAgent(loginAgent);
+                    // 3. החזרת תשובת הצלחה ללקוח
                     return new ResponseObj(200, "SUCCESS", "Agent logged in successfully");
 
                 case AGENT_LOGOUT:
@@ -83,19 +85,22 @@ public class ServerService {
 
                 case ADD_AGENT:
                     Representative newAgent = (Representative) request.getParams();
-                    inquiryManager.defineRepresentative(newAgent);
+
+//                    לחכות לפונקציה של אלישבע שאמורה לשמור סוכן חדש
+//                    InquiryManager.createNewAgentInSystem(newAgent);
                     return new ResponseObj(200, "SUCCESS", "Agent added to system successfully");
 
                 case REMOVE_AGENT:
                     int removeAgentId = (int) request.getParams();
-                    inquiryManager.deleteRepresentative(removeAgentId);
-                    return new ResponseObj(200, "SUCCESS", "Agent removed from system successfully");
-                default:
-                    return new ResponseObj(400, "FAILED", "Action not supported");
+                    boolean isDeleted = manager.deleteRepresentative(removeAgentId);
+                    if (isDeleted) {
+                        return new ResponseObj(200, "SUCCESS", "Agent removed from system successfully");
+                    } else {
+                        return new ResponseObj(404, "FAILED", "Agent not found or could not be deleted");
+                    }
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
             return new ResponseObj(500, "FAILED", e.getMessage());
         }
     }
@@ -104,6 +109,7 @@ public class ServerService {
         Queue<Inquiry> qInquiry= InquiryManager.getQInquiry();
         for(Inquiry n:qInquiry) {
             if (n.getCode() == status)
+                //לדאוג אכן בכל טיפול בפניה לעדכן למשל this.status = Status.OPEN;
                 return n.getStatus().toString();
         }
         return getStatusHistory(status);

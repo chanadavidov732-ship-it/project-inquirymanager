@@ -332,7 +332,6 @@ public class InquiryManager {
     public ResponseObj cancelInquiry(int code) throws IOException {
         Inquiry toCancel = null;
 
-        // 1. חיפוש הפנייה בתור לפי הקוד שהתקבל
         for (Inquiry inq : QInquiry) {
             if (inq.getCode() == code) {
                 toCancel = inq;
@@ -340,27 +339,13 @@ public class InquiryManager {
             }
         }
 
-        // 2. אם הפנייה נמצאה
         if (toCancel != null) {
-            // עדכון הסטטוס ל-CANCELED
             toCancel.setStatus(Inquiry.Status.CANCELED);
-
-            HandleFiles hf = new HandleFiles();
-
-            // 3. שמירת הפנייה (הפעם עם הסטטוס המעודכן)
-            // אם ב-saveFile הוספת לוגיקה שבודקת את הסטטוס ושומרת ב-History
-            hf.saveFile(toCancel);
-
-            // 4. מחיקת הקובץ מהתיקייה המקורית (Shared.Request וכדומה)
-            hf.deleteInquiryFile(toCancel);
-
-            // 5. הסרת הפנייה מהתור שבזיכרון
+            toCancel.transferToHistory();
             QInquiry.remove(toCancel);
-
             return new ResponseObj(200, "Inquiry canceled successfully", true);
         }
 
-        // אם לא נמצאה פנייה עם קוד כזה
         return new ResponseObj(404, "Inquiry not found", false);
     }
 
