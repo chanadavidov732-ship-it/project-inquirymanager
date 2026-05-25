@@ -15,8 +15,10 @@ import HandleStoreFiles.HandleFilesReflection;
 
 public class InquiryManager {
 
-    final static Queue<Inquiry> QInquiry = new ConcurrentLinkedQueue<>();
-    final static LinkedList<Representative> QRepresentative = new LinkedList<>();
+    final static Queue<Inquiry> QInquiry = new LinkedList<>();
+    final static Queue<Representative> QActiveRepresentative = new LinkedList<>();
+    final static Queue<Representative> QRepresentative = new LinkedList<>();
+    final static Queue<InquiryHandlingTask> QInquiryMergeAgent =new ConcurrentLinkedQueue<>();
 
     static {
         try {
@@ -36,7 +38,55 @@ public class InquiryManager {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("קובץ nextVal לא נמצא: " + e.getMessage(), e);
         }
+
+
+        mergingInquiriesToAgent();
     }
+
+    private static void mergingInquiriesToAgent() {
+        Thread thread=new Thread(()->{
+            while(true){
+                if (!QActiveRepresentative.isEmpty() && !QInquiry.isEmpty())
+                {
+                    InquiryHandlingTask iht=new InquiryHandlingTask(QActiveRepresentative.poll(),QInquiry.poll());
+                    //option 1-
+                    //QInquiryMergeAgent.add(iht);
+                    agentsTreatInquiries(iht);
+                }
+            }
+        } );
+        thread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void agentsTreatInquiries(InquiryHandlingTask iht) {
+        //option 1-
+
+//        Thread thread=new Thread(()->{
+//            while(true) {
+//                if (!QInquiryMergeAgent.isEmpty())
+//                    QInquiryMergeAgent.poll().getMergeInquiry().handling();
+//        }});
+//
+//        thread.start();
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        //option 2-
+
+        Thread thread = new Thread(iht);
+
+        thread.start();
+    }
+
     public Representative findRepresentativeById(int id) {
         for (Representative rep : QRepresentative) {
             if (rep.getId() == id) {
@@ -116,21 +166,21 @@ public class InquiryManager {
         scanner.close();
     }
 
-//    public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-//        HandleFilesReflection hfr = new HandleFilesReflection();
-//        File folder = new File("Representative");
-//        if (folder.exists()) {
-//            File[] files = folder.listFiles();
-//            if (files != null) {
-//                for (File file : files) {
-//                    String fileName = file.getName().replace(".txt", "");
-//                    System.out.println(fileName);
-//                    QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
-//                    //hfr.deleteCsv("Representative/" + fileName);
-//                }
-//            }
-//        }
-//    }
+    public static void beforeRepresentative() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        HandleFilesReflection hfr = new HandleFilesReflection();
+        File folder = new File("Representative");
+        if (folder.exists()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    String fileName = file.getName().replace(".txt", "");
+                    System.out.println(fileName);
+                    QRepresentative.add((Representative) hfr.readCsv("Representative/" + fileName));
+                    //hfr.deleteCsv("Representative/" + fileName);
+                }
+            }
+        }
+    }
 
     public static void before() throws FileNotFoundException {
         String[] folders = {"Shared.Request", "Shared.Question", "Shared.Complaint"};
