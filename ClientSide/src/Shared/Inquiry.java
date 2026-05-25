@@ -1,7 +1,11 @@
 package Shared;
+
+import HandleStoreFiles.HandleFiles;
 import HandleStoreFiles.IForSaving;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,26 +17,46 @@ public abstract class Inquiry implements IForSaving, Serializable {
     protected LocalDateTime creationDate;
     protected Status status;
 
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public enum Status{
-        OPEN,CANCELED,IN_TREATMENT,IN_HISTORY
+        OPEN,CANCELED,IN_TREATMENT, TREATED
     }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
     public Status getStatus(){return status;}
+    public void setStatus(Status newStatus){
+        this.status = newStatus;
+//        if(this.status == Status.CANCELED || this.status == Status.TREATED)
+//            transferToHistory();
+    }
+    public void transferToHistory(){
+        HandleFiles handleFiles = new HandleFiles();
+        File file = new File(this.getClass().getName()+"/"+this.getFileName());
+        if(file.delete()) {
+            try {
+                handleFiles.saveFile(this);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
 
     public static Integer getNextCodeVal() {
         return nextCodeVal++;
     }
+
 
     public int getCode() {
         if (code==null)
             return  0;
         return code;
     }
-
     public void setCode(Integer code) {
         this.code = code;
     }
@@ -46,9 +70,15 @@ public abstract class Inquiry implements IForSaving, Serializable {
 //    }
     @Override
     public String getFolderName() {
-        return getClass().getName();
+        if(this.status == Status.CANCELED || this.status == Status.TREATED)
+            return "history";
+        File folder=new File(getClass().getName());
+        if(!folder.exists())
+            folder.mkdir();
+        System.out.println(folder.getName());
+        return folder.getName();
     }
-
+    public abstract String toString();
     public abstract void handling() ;
     public abstract String getFileName();
     public abstract String getData() ;

@@ -62,4 +62,14 @@ public class Complaint extends Inquiry  {
                 , LocalDateTime.parse(values.get(3))
         );
     }
+    @Override
+    public String toString() {
+        return "Complaint{" +
+                "code=" + code +
+                ", assignedBranch='" + assignedBranch + '\'' +
+                ", description='" + description + '\'' +
+                ", creationDate=" + creationDate +
+                ", status=" + status +
+                '}';
+    }
 }
