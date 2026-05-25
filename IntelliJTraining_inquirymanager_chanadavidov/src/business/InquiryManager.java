@@ -146,8 +146,8 @@ public class InquiryManager {
             QRepresentative.add(new Representative(v, id));
 
             HandleFilesReflection hfr = new HandleFilesReflection();
-            hfr.saveCSVObject(QRepresentative.peekLast(), "Representative/"
-                    + String.valueOf(QRepresentative.peekLast().getCode()));
+            hfr.saveCSVObject(QRepresentative.peek(), "Representative/"
+                    + String.valueOf(QRepresentative.peek().getCode()));
 
             System.out.println("to add representative press 1 to exit enter any key");
             x = scanner.nextInt();
