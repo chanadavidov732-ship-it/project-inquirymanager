@@ -132,30 +132,60 @@ public class InquiryManager {
 
         return toRemove != null;
     }
-    public void defineRepresentative(Representative rep) throws IOException, IllegalAccessException {
-//        Scanner scanner = new Scanner(System.in);
-//        int x = 1, id;
-//        String v;
 
-//        while (x == 1) {
-//            System.out.println("enter a name");
-//            v = scanner.next();
-//            System.out.println("enter id");
-//            id = scanner.nextInt();
 
-           // Representative rep = new Representative(v, id);
+/// //////////מיין
+    public void defineRepresentative(Representative rep) throws IOException, IllegalAccessException
+    {
+       QRepresentative.add(rep);
+        HandleFilesReflection hfr = new HandleFilesReflection();
+        hfr.saveCSVObject(rep, "Representative/" + String.valueOf(rep.getId()));
+    }
+
+
+/// //////////////חוי
+    // שינינו את החתימה כך שהיא מקבלת שם ו-ID (אם הם מגיעים מהשרת)
+    public void defineRepresentative(String nameFromServer, int idFromServer) throws IOException, IllegalAccessException {
+
+        // אם הנתונים הגיעו מהשרת
+        if (nameFromServer != null && idFromServer != 0) {
+            Representative rep = new Representative(nameFromServer, idFromServer);
+            QRepresentative.add(rep);
+
+            // --- שמירה ידנית פשוטה ועוקפת רפלקשן ---
+            java.io.File file = new java.io.File("Representative/" + idFromServer + ".csv");
+            file.getParentFile().mkdirs(); // יוצר את התיקייה במידה והיא לא קיימת
+
+            try (java.io.FileWriter fw = new java.io.FileWriter(file)) {
+                fw.write(idFromServer + "," + nameFromServer); // כותב את ה-ID והשם ישירות לקובץ
+            }
+            // ----------------------------------------
+
+            return; // מסיים את הפעולה בשביל השרת
+        }
+        // --- הקוד המקורי שלה עבור בדיקות מקומיות (רץ רק אם לא הגיעו נתונים מהשרת) ---
+        Scanner scanner = new Scanner(System.in);
+        int x = 1, id;
+        String v;
+
+        while (x == 1) {
+            System.out.println("enter a name");
+            v = scanner.next();
+            System.out.println("enter id");
+            id = scanner.nextInt();
+
+            Representative rep = new Representative(v, id);
             QRepresentative.add(rep);
             HandleFilesReflection hfr = new HandleFilesReflection();
             hfr.saveCSVObject(rep, "Representative/" + String.valueOf(rep.getId()));
-            //QRepresentative.add(new Representative(v, id));
-//           HandleFilesReflection hfr = new HandleFilesReflection();
-//           hfr.saveCSVObject(QRepresentative.peek(), "Representative/"
-//                    + String.valueOf(QRepresentative.peek().getCode()));
 
-//            System.out.println("to add representative press 1 to exit enter any key");
-//            x = scanner.nextInt();
-//        }
+            System.out.println("to add representative press 1 to exit enter any key");
+            x = scanner.nextInt();
+        }
     }
+
+
+
 
     public static void beforeNextVal() throws FileNotFoundException {
         File dataFile = new File("nextVal.txt");
@@ -348,6 +378,7 @@ public class InquiryManager {
 
         return new ResponseObj(404, "Inquiry not found", false);
     }
+
 
     public static List<Representative> loadRepresentativesReflection() {
         List<Representative> representatives = new ArrayList<>();

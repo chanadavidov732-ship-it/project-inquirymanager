@@ -73,34 +73,38 @@ public class InquiryManagerClient {
             }
             case 6 -> {
                 System.out.println("Enter Agent Name:");
-                String loginName = scanner.nextLine();
+                String agentName = scanner.nextLine();
                 System.out.println("Enter Agent ID:");
-                int loginId = scanner.nextInt();
+                int agentId = scanner.nextInt();
+                scanner.nextLine();
 
-                Representative agentToLogin = new Representative(loginName, loginId);
-                ro = new RequestObj(RequestObj.Action.AGENT_LOGIN, (Object)agentToLogin);
+                Representative agentLogin = new Representative(agentName, agentId);
+                ro = new RequestObj(RequestObj.Action.AGENT_LOGIN, agentLogin);
             }
             case 7 -> {
                 System.out.println("Enter Agent ID to Logout:");
                 int logoutId = scanner.nextInt();
+                scanner.nextLine();
 
-                ro = new RequestObj(RequestObj.Action.AGENT_LOGOUT, (Object)logoutId);
+                ro = new RequestObj(RequestObj.Action.AGENT_LOGOUT, logoutId);
             }
             case 8 -> {
                 System.out.println("Enter New Agent Name to register:");
                 String newAgentName = scanner.nextLine();
                 System.out.println("Enter New Agent ID:");
-                int newAgentId = Integer.parseInt(scanner.nextLine());
+                int newAgentId = scanner.nextInt();
+                scanner.nextLine();
 
                 Representative agentToAdd = new Representative(newAgentName, newAgentId);
-                ro = new RequestObj(RequestObj.Action.ADD_AGENT, (Object)agentToAdd);
+
+                ro = new RequestObj(RequestObj.Action.ADD_AGENT, agentToAdd);
             }
             case 9 -> {
                 System.out.println("Enter Agent ID to remove from system:");
                 int removeId = scanner.nextInt();
 
-                ro = new RequestObj(RequestObj.Action.REMOVE_AGENT, removeId);
-            }
+                ro = new RequestObj(RequestObj.Action.REMOVE_AGENT, removeId);            }
+
         }
         return ro;
     }

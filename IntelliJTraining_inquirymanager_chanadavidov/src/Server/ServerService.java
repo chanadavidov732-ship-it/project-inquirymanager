@@ -75,18 +75,17 @@ public class ServerService {
                     int logoutAgentId = (int) request.getParams();
                     inquiryManager.disconnectAgent(logoutAgentId);
                     return new ResponseObj(200, "SUCCESS", "Agent logged out successfully");
-
                 case ADD_AGENT:
-                    Representative newAgent = (Representative) request.getParams();
-                    inquiryManager.defineRepresentative(newAgent);
-                    return new ResponseObj(200, "SUCCESS", "Agent added to system successfully");
-
+                    Representative rep1 = (Representative) request.getParams();
+                    manager.defineRepresentative(rep1.getName(), rep1.getId());
+                    return new ResponseObj(200, "SUCCESS", "Agent added successfully");
                 case REMOVE_AGENT:
-                    int removeAgentId = (int) request.getParams();
-                    inquiryManager.deleteRepresentative(removeAgentId);
-                    return new ResponseObj(200, "SUCCESS", "Agent removed from system successfully");
+                    int idToRemove = (Integer) request.getParams();
+                    manager.deleteRepresentative(idToRemove);
+                    return new ResponseObj(200, "SUCCESS", "Agent removed successfully");
                 default:
                     return new ResponseObj(400, "FAILED", "Action not supported");
+
             }
         }
         catch (Exception e) {
@@ -98,6 +97,7 @@ public class ServerService {
         Queue<Inquiry> qInquiry= InquiryManager.getQInquiry();
         for(Inquiry n:qInquiry) {
             if (n.getCode() == status)
+                //לדאוג אכן בכל טיפול בפניה לעדכן למשל this.status = Status.OPEN;
                 return n.getStatus().toString();
         }
         return getStatusHistory(status);
