@@ -1,1 +1,0 @@
-inquiry type: testSaveFile, number inquiry: PersonForTestSaving1234, description: 1234,aaa
