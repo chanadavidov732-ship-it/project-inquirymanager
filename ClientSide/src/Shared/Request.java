@@ -56,4 +56,13 @@ public class Request extends Inquiry {
                 , values.get(2)
                 , LocalDateTime.parse(values.get(3))
         );}
+    @Override
+    public String toString() {
+        return "Question{" +
+                "code=" + code +
+                ", description='" + description + '\'' +
+                ", creationDate=" + creationDate +
+                ", status=" + status +
+                '}';
+    }
 }

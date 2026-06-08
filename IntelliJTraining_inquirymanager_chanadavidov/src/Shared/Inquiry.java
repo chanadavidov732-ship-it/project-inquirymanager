@@ -78,7 +78,7 @@ public abstract class Inquiry implements IForSaving, Serializable {
         System.out.println(folder.getName());
         return folder.getName();
     }
-
+    public abstract String toString();
     public abstract void handling() ;
     public abstract String getFileName();
     public abstract String getData() ;
