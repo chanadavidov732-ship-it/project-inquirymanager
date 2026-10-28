@@ -1,308 +1,281 @@
-<div dir="rtl">
+# 📨 Inquiry Manager
 
-# 📨 Inquiry Manager – מערכת לניהול פניות
+A multi-threaded **client–server inquiry management system** written in **Java**.
 
-מערכת **שרת–לקוח (Client–Server)** בשפת **Java** לניהול פניות של לקוחות: שאלות, בקשות ותלונות.
-המערכת מאפשרת ללקוחות לפתוח פניות, לעקוב אחר הסטטוס שלהן ולבטל אותן, ומאפשרת לנהל נציגי שירות שמטפלים בפניות באופן אוטומטי ובמקביל.
+Customers use a console client to submit questions, requests and complaints, track their status, and cancel them. On the server side, service agents are registered, logged in and automatically assigned to open inquiries, with each inquiry handled concurrently in its own thread.
 
-הפרויקט מדגים עבודה עם תכנות מונחה עצמים, תקשורת ברשת באמצעות Sockets, ריבוי תהליכונים (Multithreading), שמירת נתונים בקבצים ו־Reflection.
-
----
-
-## 📑 תוכן עניינים
-
-- [סקירה כללית](#-סקירה-כללית)
-- [יכולות המערכת](#-יכולות-המערכת)
-- [ארכיטקטורה](#-ארכיטקטורה)
-- [מבנה הפרויקט](#-מבנה-הפרויקט)
-- [מודל הנתונים](#-מודל-הנתונים)
-- [פרוטוקול התקשורת](#-פרוטוקול-התקשורת)
-- [טיפול בפניות וריבוי תהליכונים](#-טיפול-בפניות-וריבוי-תהליכונים)
-- [שמירת נתונים](#-שמירת-נתונים)
-- [התקנה והרצה](#-התקנה-והרצה)
-- [שימוש במערכת](#-שימוש-במערכת)
-- [טכנולוגיות ונושאים מרכזיים](#-טכנולוגיות-ונושאים-מרכזיים)
+The project demonstrates object-oriented design, socket networking, multithreading, file-based persistence and Java Reflection — without any external libraries or databases.
 
 ---
 
-## 🔎 סקירה כללית
+## Table of Contents
 
-המערכת בנויה משני חלקים עצמאיים:
-
-| רכיב | תיקייה | תפקיד |
-|------|--------|-------|
-| **שרת** | `IntelliJTraining_inquirymanager_chanadavidov` | מאזין לחיבורים בפורט `8888`, מנהל את תור הפניות והנציגים, שומר נתונים לקבצים ומשבץ נציגים לפניות. |
-| **לקוח** | `ClientSide` | אפליקציית קונסול שמתחברת לשרת, מציגה תפריט פעולות ושולחת בקשות לשרת. |
-
-הלקוח והשרת משתפים את אותן מחלקות מודל (חבילת `Shared`), כך שהאובייקטים עוברים ביניהם ברשת באמצעות **Java Serialization**.
-
----
-
-## ✨ יכולות המערכת
-
-**ניהול פניות**
-- יצירת פנייה חדשה מאחד משלושת הסוגים: שאלה, בקשה או תלונה.
-- הצגת כל הפניות הפתוחות במערכת.
-- בדיקת סטטוס של פנייה לפי קוד הפנייה.
-- ביטול פנייה פתוחה.
-- סטטיסטיקה: ספירת פניות שנפתחו בחודש מסוים.
-
-**ניהול נציגים**
-- הוספת נציג חדש למערכת (נשמר לקובץ).
-- הסרת נציג מהמערכת.
-- התחברות נציג (Login) – הנציג הופך לזמין לטיפול בפניות.
-- התנתקות נציג (Logout) – הנציג מוסר מרשימת הנציגים הזמינים.
-
-**טיפול אוטומטי**
-- תהליכון רקע שמשבץ באופן אוטומטי נציג פנוי לפנייה הבאה בתור.
-- כל טיפול בפנייה רץ בתהליכון נפרד, כך שכמה פניות מטופלות במקביל.
-- פנייה שטופלה או בוטלה מועברת להיסטוריה.
+- [Overview](#overview)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Domain Model](#domain-model)
+- [Communication Protocol](#communication-protocol)
+- [Concurrency Model](#concurrency-model)
+- [Persistence](#persistence)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Key Concepts and Technologies](#key-concepts-and-technologies)
+- [Author](#author)
 
 ---
 
-## 🏗 ארכיטקטורה
+## Overview
 
-<div dir="ltr">
+The repository contains two standalone applications:
+
+| Component | Directory | Responsibility |
+|-----------|-----------|----------------|
+| **Server** | `IntelliJTraining_inquirymanager_chanadavidov` | Listens on port `8888`, maintains the inquiry and agent queues, assigns agents to inquiries, and persists all data to disk. |
+| **Client** | `ClientSide` | Console application that connects to the server, presents an action menu, and sends requests. |
+
+Both applications share the same model classes (the `Shared` package). Objects are exchanged over the network using standard **Java Serialization**.
+
+---
+
+## Features
+
+### Inquiry management
+- Submit a new inquiry of one of three types: **Question**, **Request** or **Complaint**.
+- List all open inquiries.
+- Look up the status of an inquiry by its code.
+- Cancel an open inquiry.
+- Report the number of inquiries opened in a given month.
+
+### Agent management
+- Register a new agent (persisted to disk).
+- Remove an agent from the system.
+- Agent **login** — the agent becomes available to handle inquiries.
+- Agent **logout** — the agent is removed from the pool of available agents.
+
+### Automatic processing
+- A background dispatcher continuously pairs the next open inquiry with an available agent.
+- Each inquiry is processed in its own thread, allowing several inquiries to be handled in parallel.
+- Treated or canceled inquiries are moved to a history store.
+
+---
+
+## Architecture
 
 ```
-┌─────────────────────┐        RequestObj         ┌──────────────────────────────┐
-│   Client (Console)  │ ────────────────────────▶ │  InquiryManagerServer :8888  │
-│ InquiryManagerClient│ ◀──────────────────────── │   └─ ClientHandler (Thread)  │
-└─────────────────────┘        ResponseObj        │        └─ ServerService      │
-                                                   │             └─ InquiryManager│
-                                                   │                  ├─ Queues   │
-                                                   │                  └─ HandleFiles
-                                                   └──────────────────────────────┘
-                                                                  │
-                                                                  ▼
-                                                     File System (txt / csv files)
+┌──────────────────────┐        RequestObj        ┌───────────────────────────────┐
+│   Client (console)   │ ───────────────────────▶ │  InquiryManagerServer :8888   │
+│ InquiryManagerClient │ ◀─────────────────────── │   └─ ClientHandler (thread)   │
+└──────────────────────┘        ResponseObj       │        └─ ServerService       │
+                                                   │             └─ InquiryManager │
+                                                   │                  ├─ queues    │
+                                                   │                  └─ HandleFiles│
+                                                   └───────────────────────────────┘
+                                                                   │
+                                                                   ▼
+                                                        File system (text / CSV)
 ```
 
-</div>
+The server is organised into four layers:
 
-**שכבות המערכת בצד השרת:**
-
-1. **שכבת רשת** – `InquiryManagerServer` מקבל חיבורים, ולכל לקוח נפתח `ClientHandler` בתהליכון משלו.
-2. **שכבת שירות** – `ServerService` מקבל `RequestObj`, מנתב לפי סוג הפעולה ומחזיר `ResponseObj`.
-3. **שכבה עסקית** – `InquiryManager` מנהל את התורים, את שיבוץ הנציגים ואת הלוגיקה של הפניות.
-4. **שכבת נתונים** – `HandleFiles` ו־`HandleFilesReflection` אחראיות על שמירה וטעינה מקבצים.
+1. **Network layer** — `InquiryManagerServer` accepts incoming connections and spawns a `ClientHandler` thread per client.
+2. **Service layer** — `ServerService` receives a `RequestObj`, dispatches it by action type and returns a `ResponseObj`.
+3. **Business layer** — `InquiryManager` owns the queues, agent assignment and inquiry logic.
+4. **Data layer** — `HandleFiles` and `HandleFilesReflection` read and write objects to the file system.
 
 ---
 
-## 📂 מבנה הפרויקט
-
-<div dir="ltr">
+## Project Structure
 
 ```
 project-inquirymanager/
-├── ClientSide/                         # Client application
+├── ClientSide/                                  # Client application
 │   └── src/
-│       ├── Main.java                   # Client entry point
+│       ├── Main.java                            # Client entry point
 │       ├── clientData/
-│       │   └── InquiryManagerClient.java   # Console menu + socket communication
-│       ├── Shared/                     # Model classes shared with the server
+│       │   └── InquiryManagerClient.java        # Console menu and socket communication
+│       ├── Shared/                              # Model classes shared with the server
 │       ├── business/
 │       └── HandleStoreFiles/
 │
-└── IntelliJTraining_inquirymanager_chanadavidov/   # Server application
-    ├── nextVal.txt                     # Next inquiry code (persisted counter)
+└── IntelliJTraining_inquirymanager_chanadavidov/    # Server application
+    ├── nextVal.txt                              # Persisted counter for the next inquiry code
     └── src/
-        ├── Main.java                   # Server entry point
+        ├── Main.java                            # Server entry point
         ├── Server/
-        │   ├── InquiryManagerServer.java   # ServerSocket on port 8888
-        │   ├── ClientHandler.java          # One thread per connected client
-        │   └── ServerService.java          # Routes each request to its action
+        │   ├── InquiryManagerServer.java        # ServerSocket listening on port 8888
+        │   ├── ClientHandler.java               # One thread per connected client
+        │   └── ServerService.java               # Routes each request to its handler
         ├── business/
-        │   ├── InquiryManager.java         # Core logic: queues, agents, statistics
-        │   ├── InquiryHandling.java        # Thread that handles a single inquiry
-        │   └── InquiryHandlingTask.java    # Runnable pairing an agent with an inquiry
+        │   ├── InquiryManager.java              # Core logic: queues, agents, statistics
+        │   ├── InquiryHandling.java             # Thread that processes a single inquiry
+        │   └── InquiryHandlingTask.java         # Runnable that pairs an agent with an inquiry
         ├── Shared/
-        │   ├── Inquiry.java                # Abstract base class
+        │   ├── Inquiry.java                     # Abstract base class
         │   ├── Question.java
         │   ├── Request.java
         │   ├── Complaint.java
-        │   ├── Representative.java         # Service agent
-        │   ├── RequestObj.java             # Client → Server message
-        │   └── ResponseObj.java            # Server → Client message
+        │   ├── Representative.java              # Service agent
+        │   ├── RequestObj.java                  # Client → server message
+        │   └── ResponseObj.java                 # Server → client message
         ├── HandleStoreFiles/
-        │   ├── IForSaving.java             # Interface for savable objects
-        │   ├── HandleFiles.java            # Save / read / delete text files
-        │   └── HandleFilesReflection.java  # Generic CSV save/load via Reflection
-        └── testSaveFile/                   # Manual tests for the file layer
+        │   ├── IForSaving.java                  # Contract for persistable objects
+        │   ├── HandleFiles.java                 # Save, read and delete text files
+        │   └── HandleFilesReflection.java       # Generic CSV persistence via Reflection
+        └── testSaveFile/                        # Manual tests for the persistence layer
 ```
-
-</div>
 
 ---
 
-## 🧩 מודל הנתונים
+## Domain Model
 
-### פנייה – `Inquiry` (מחלקה אבסטרקטית)
+### `Inquiry` (abstract)
 
-| שדה | סוג | תיאור |
-|-----|-----|-------|
-| `code` | `Integer` | מזהה ייחודי, נוצר אוטומטית מ־`nextCodeVal` |
-| `description` | `String` | תיאור הפנייה |
-| `creationDate` | `LocalDateTime` | מועד יצירה |
-| `status` | `Status` | סטטוס נוכחי |
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | `Integer` | Unique identifier, generated from the `nextCodeVal` counter |
+| `description` | `String` | Free-text description |
+| `creationDate` | `LocalDateTime` | Time of creation |
+| `status` | `Status` | Current lifecycle state |
 
-**סוגי פניות (ירושה מ־`Inquiry`):**
+### Inquiry types
 
-| מחלקה | תיאור | שדות נוספים | זמן טיפול מדומה | עדיפות |
-|-------|-------|-------------|------------------|--------|
-| `Question` | שאלה | – | 5 שניות | **גבוהה** (Priority 10) |
-| `Request` | בקשה | – | 3 שניות | רגילה |
-| `Complaint` | תלונה | `assignedBranch` – הסניף המטפל | 5 שניות | רגילה |
+| Class | Purpose | Additional fields | Simulated handling time | Thread priority |
+|-------|---------|-------------------|-------------------------|-----------------|
+| `Question` | A general question | — | 5 seconds | **High** (10) |
+| `Request` | A service request | — | 3 seconds | Normal |
+| `Complaint` | A customer complaint | `assignedBranch` | 5 seconds | Normal |
 
-**מחזור החיים של פנייה (`Status`):**
-
-<div dir="ltr">
+### Inquiry lifecycle
 
 ```
-OPEN ──▶ IN_TREATMENT ──▶ TREATED   (moved to history)
+OPEN ──▶ IN_TREATMENT ──▶ TREATED    (moved to history)
   │
-  └────────────────────▶ CANCELED   (moved to history)
+  └─────────────────────▶ CANCELED   (moved to history)
 ```
 
-</div>
+### `Representative`
 
-### נציג – `Representative`
-
-| שדה | תיאור |
-|-----|-------|
-| `code` | מספר רץ פנימי |
-| `name` | שם הנציג |
-| `id` | תעודת זהות / מזהה הנציג |
-| `handledInquiriesIds` | רשימת קודי הפניות שהנציג טיפל בהן |
+| Field | Description |
+|-------|-------------|
+| `code` | Internal sequential number |
+| `name` | Agent name |
+| `id` | Agent identifier |
+| `handledInquiriesIds` | Codes of the inquiries the agent has handled |
 
 ---
 
-## 🔌 פרוטוקול התקשורת
+## Communication Protocol
 
-הלקוח שולח אובייקט `RequestObj` הכולל **פעולה** ו**פרמטר**, והשרת מחזיר `ResponseObj` הכולל **קוד סטטוס**, **הודעה** ו**תוצאה**.
+Every exchange is a single round trip: the client sends a `RequestObj` (an **action** plus an optional **parameter**), and the server replies with a `ResponseObj` (a **status code**, a **message** and a **result**).
 
-| פעולה (`Action`) | פרמטר שנשלח | תוצאה שמוחזרת |
-|------------------|-------------|----------------|
-| `ADD_INQUIRY` | אובייקט `Inquiry` | קוד הפנייה שנוצרה |
-| `GET_ALL` | – | רשימת כל הפניות |
-| `GET_INQUIRY_STATUS` | קוד פנייה (`int`) | הסטטוס של הפנייה |
-| `GET_COUNT_BY_MONTH` | מספר חודש (`1–12`) | מספר הפניות באותו חודש |
-| `CANCEL_INQUIRY` | קוד פנייה (`int`) | הצלחה / פנייה לא נמצאה |
-| `AGENT_LOGIN` | אובייקט `Representative` | אישור התחברות |
-| `AGENT_LOGOUT` | מזהה נציג (`int`) | אישור התנתקות |
-| `ADD_AGENT` | אובייקט `Representative` | אישור הוספה |
-| `REMOVE_AGENT` | מזהה נציג (`int`) | אישור הסרה |
-| `TEST` | – | `SERVER_READY` – בדיקת זמינות |
+| Action | Parameter | Result |
+|--------|-----------|--------|
+| `ADD_INQUIRY` | `Inquiry` | Code of the new inquiry |
+| `GET_ALL` | — | List of all open inquiries |
+| `GET_INQUIRY_STATUS` | Inquiry code (`int`) | Current status |
+| `GET_COUNT_BY_MONTH` | Month (`1–12`) | Number of inquiries opened that month |
+| `CANCEL_INQUIRY` | Inquiry code (`int`) | Success, or *not found* |
+| `AGENT_LOGIN` | `Representative` | Login confirmation |
+| `AGENT_LOGOUT` | Agent ID (`int`) | Logout confirmation |
+| `ADD_AGENT` | `Representative` | Registration confirmation |
+| `REMOVE_AGENT` | Agent ID (`int`) | Removal confirmation |
+| `TEST` | — | `SERVER_READY` (health check) |
 
-**קודי סטטוס בתשובה:**
+### Response status codes
 
-| קוד | משמעות |
-|-----|--------|
-| `200` | הפעולה הצליחה |
-| `400` | בקשה לא תקינה או פעולה לא נתמכת |
-| `404` | הפריט המבוקש לא נמצא |
-| `500` | שגיאה פנימית בשרת |
-
----
-
-## ⚙️ טיפול בפניות וריבוי תהליכונים
-
-`InquiryManager` מנהל מספר תורים:
-
-| תור | תוכן |
-|-----|------|
-| `QInquiry` | פניות פתוחות שממתינות לטיפול |
-| `QRepresentative` | כל הנציגים הרשומים במערכת |
-| `QActiveRepresentative` | נציגים מחוברים שזמינים לטיפול |
-
-**תהליך השיבוץ:**
-
-1. בעת עליית המערכת נטענים מהקבצים הפניות, הנציגים והמונה `nextVal`.
-2. תהליכון רקע (`mergingInquiriesToAgent`) בודק כל הזמן אם יש גם פנייה ממתינה וגם נציג זמין.
-3. כשיש התאמה – נוצר `InquiryHandlingTask` שמחבר בין הנציג לפנייה, ומופעל בתהליכון נפרד.
-4. הטיפול עצמו (`InquiryHandling`) מדמה זמן עבודה לפי סוג הפנייה, ושאלות מקבלות עדיפות גבוהה.
-5. בסיום, הפנייה מסומנת כ־`TREATED`, עוברת להיסטוריה, והנציג חוזר לתור.
-
-בנוסף, השרת עצמו מטפל בכמה לקוחות במקביל – כל לקוח מקבל `ClientHandler` בתהליכון משלו.
+| Code | Meaning |
+|------|---------|
+| `200` | Success |
+| `400` | Invalid request or unsupported action |
+| `404` | Requested item not found |
+| `500` | Internal server error |
 
 ---
 
-## 💾 שמירת נתונים
+## Concurrency Model
 
-המערכת לא משתמשת במסד נתונים. כל הנתונים נשמרים בקבצי טקסט בתיקיית ההרצה של השרת:
+`InquiryManager` maintains the following queues:
 
-| מיקום | תוכן |
-|-------|------|
-| `Shared.Question/` · `Shared.Request/` · `Shared.Complaint/` | קובץ לכל פנייה פתוחה (`<code>.txt`) |
-| `history/` | פניות שטופלו או בוטלו |
-| `Representative/` | קובץ לכל נציג (`<id>.txt`) |
-| `nextVal.txt` | הקוד הבא שיינתן לפנייה חדשה, כדי שהמספור יישמר בין הרצות |
+| Queue | Contents |
+|-------|----------|
+| `QInquiry` | Open inquiries waiting to be handled |
+| `QRepresentative` | All registered agents |
+| `QActiveRepresentative` | Logged-in agents available for work |
 
-**שני מנגנוני שמירה:**
+### Processing flow
 
-- **`HandleFiles`** – עובד מול הממשק `IForSaving`. כל מחלקה מגדירה בעצמה את שם התיקייה, שם הקובץ, איך להפוך את עצמה לטקסט (`getData`) ואיך לשחזר את עצמה ממנו (`parseFromFile`).
-- **`HandleFilesReflection`** – שמירה וטעינה גנריות בפורמט CSV באמצעות **Reflection**. שם המחלקה נשמר בתחילת הקובץ, ובטעינה נוצר אובייקט מהמחלקה המתאימה והשדות שלו מתמלאים אוטומטית – בלי לכתוב קוד ייעודי לכל מחלקה.
+1. On startup, the server loads open inquiries, registered agents and the `nextVal` counter from disk.
+2. A background dispatcher thread watches for the moment both an open inquiry and an available agent exist.
+3. When they do, it creates an `InquiryHandlingTask` that pairs the two and runs it on a new thread.
+4. `InquiryHandling` simulates the work according to the inquiry type; questions run with elevated priority.
+5. When handling completes, the inquiry is marked `TREATED`, moved to history, and the agent is returned to the pool.
+
+Independently of inquiry processing, the server serves multiple clients at once — each connection runs in its own `ClientHandler` thread.
 
 ---
 
-## 🚀 התקנה והרצה
+## Persistence
 
-### דרישות מקדימות
+The system does not use a database. All data is stored as text files in the server's working directory:
 
-- **JDK 17** ומעלה (בקוד יש שימוש ב־switch expressions וב־pattern matching ל־`instanceof`)
-- IDE מומלץ: **IntelliJ IDEA**
+| Location | Contents |
+|----------|----------|
+| `Shared.Question/`, `Shared.Request/`, `Shared.Complaint/` | One file per open inquiry (`<code>.txt`) |
+| `history/` | Treated and canceled inquiries |
+| `Representative/` | One file per agent (`<id>.txt`) |
+| `nextVal.txt` | Next inquiry code, so numbering continues across restarts |
 
-### שכפול הפרויקט
+Two persistence strategies are implemented:
 
-<div dir="ltr">
+- **`HandleFiles`** — works with any class implementing `IForSaving`. Each class defines its own folder name, file name, serialised form (`getData`) and how to rebuild itself from that form (`parseFromFile`).
+- **`HandleFilesReflection`** — a generic CSV serializer built on **Java Reflection**. The fully qualified class name is written as the first value; on load, the class is instantiated by name and its fields are populated automatically, with no class-specific code.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- **JDK 17 or later** (the code uses switch expressions and pattern matching for `instanceof`)
+- **IntelliJ IDEA** (recommended)
+
+### Clone the repository
 
 ```bash
 git clone https://github.com/chanadavidov732-ship-it/project-inquirymanager.git
 cd project-inquirymanager
 ```
 
-</div>
+### 1. Start the server
 
-### 1. הרצת השרת
+1. Open `IntelliJTraining_inquirymanager_chanadavidov` as a project in IntelliJ.
+2. Run `Server/InquiryManagerServer.java`.
+   Alternatively, run `Main.java`, which first prompts for two sample inquiries in the console and then starts the server.
+3. When the server is ready, it prints:
 
-1. פתחו את התיקייה `IntelliJTraining_inquirymanager_chanadavidov` כפרויקט ב־IntelliJ.
-2. הריצו את `Server/InquiryManagerServer.java` (או את `Main.java`, שיוצרת קודם שתי פניות לדוגמה דרך הקונסול ואז מפעילה את השרת).
-3. כשהשרת עולה תופיע ההודעה:
+   ```
+   Inquiry Manager Server started on port 8888
+   ```
 
-<div dir="ltr">
+### 2. Start the client
 
-```
-Inquiry Manager Server started on port 8888
-```
+1. Open `ClientSide` as a separate project.
+2. In `ClientSide/src/Main.java`, set the server address. To run both on the same machine:
 
-</div>
+   ```java
+   InquiryManagerClient i = new InquiryManagerClient("localhost", 8888);
+   ```
 
-### 2. הרצת הלקוח
+3. Run `Main.java`. On a successful connection the client prints `client success connect to server`.
 
-1. פתחו את התיקייה `ClientSide` כפרויקט נפרד.
-2. ב־`ClientSide/src/Main.java` עדכנו את כתובת השרת. להרצה על אותו מחשב:
-
-<div dir="ltr">
-
-```java
-InquiryManagerClient i = new InquiryManagerClient("localhost", 8888);
-```
-
-</div>
-
-3. הריצו את `Main.java`. אם החיבור הצליח תופיע ההודעה `client success connect to server`.
-
-> 💡 אפשר להריץ כמה לקוחות במקביל מול אותו שרת.
-
-> ⚠️ יש להפעיל את השרת **לפני** הלקוח. תיקיות הנתונים נוצרות בתיקיית ההרצה של השרת.
+> **Note:** The server must be running before the client starts. Multiple clients can connect to the same server simultaneously. Data folders are created in the server's working directory.
 
 ---
 
-## 🖥 שימוש במערכת
+## Usage
 
-לאחר ההתחברות יוצג ללקוח התפריט הבא:
-
-<div dir="ltr">
+Once connected, the client displays the main menu:
 
 ```
 press:
@@ -318,11 +291,7 @@ press:
 10 - exit
 ```
 
-</div>
-
-**דוגמה – יצירת תלונה:**
-
-<div dir="ltr">
+### Example: submitting a complaint
 
 ```
 > 2
@@ -341,31 +310,27 @@ SUCCESS
 5
 ```
 
-</div>
-
-המספר שמוחזר (`5` בדוגמה) הוא קוד הפנייה, שבעזרתו אפשר לבדוק את הסטטוס שלה (אפשרות 3) או לבטל אותה (אפשרות 5).
+The returned value (`5` in this example) is the inquiry code. Use it with option **3** to check the inquiry's status, or option **5** to cancel it.
 
 ---
 
-## 🛠 טכנולוגיות ונושאים מרכזיים
+## Key Concepts and Technologies
 
-| נושא | מימוש בפרויקט |
-|------|----------------|
-| **OOP – ירושה ופולימורפיזם** | `Question`, `Request`, `Complaint` יורשות מ־`Inquiry` ומממשות את `handling()` כל אחת בדרכה |
-| **ממשקים** | `IForSaving` מגדיר חוזה אחיד לכל אובייקט שניתן לשמור לקובץ |
-| **תקשורת רשת** | `ServerSocket` / `Socket` עם `ObjectInputStream` / `ObjectOutputStream` |
-| **Serialization** | מחלקות המודל וההודעות מממשות `Serializable` |
-| **Multithreading** | תהליכון לכל לקוח, תהליכון שיבוץ ברקע, תהליכון לכל טיפול בפנייה, עדיפויות תהליכונים |
-| **Concurrency** | שימוש ב־`ConcurrentLinkedQueue` ובתורים לניהול משימות |
-| **Reflection** | שמירה וטעינה גנריות של אובייקטים, ויצירת מופע לפי שם המחלקה |
+| Concept | Where it appears |
+|---------|------------------|
+| **Inheritance and polymorphism** | `Question`, `Request` and `Complaint` extend `Inquiry`, each providing its own `handling()` implementation |
+| **Interfaces** | `IForSaving` defines a uniform contract for every persistable object |
+| **Socket networking** | `ServerSocket` / `Socket` with `ObjectInputStream` / `ObjectOutputStream` |
+| **Serialization** | Model and message classes implement `Serializable` |
+| **Multithreading** | A thread per client, a background dispatcher, a thread per inquiry, and thread priorities |
+| **Concurrent collections** | `ConcurrentLinkedQueue` and queue-based task management |
+| **Reflection** | Generic object persistence and instantiation by class name |
 | **File I/O** | `FileWriter`, `Scanner`, `java.nio.file.Files` |
-| **Streams API** | חישוב סטטיסטיקות חודשיות באמצעות `Stream.concat` ו־`filter` |
+| **Streams API** | Monthly statistics using `Stream.concat` and `filter` |
 
 ---
 
-## 👩‍💻 מפתחת
+## Author
 
 **Chana Davidov**
 GitHub: [chanadavidov732-ship-it](https://github.com/chanadavidov732-ship-it)
-
-</div>
